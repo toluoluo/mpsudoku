@@ -1,0 +1,135 @@
+/* pages/games/games.wxss */
+.scrollarea {
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.games-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0rpx;
+  box-sizing: border-box;
+} 
+
+.play-view{
+  margin: 10rpx;
+  border: 4rpx solid #e2e3e5;
+  border-color: #000;
+  border-radius: 6rpx;
+}
+
+.dark {
+  background-color: #f0ffff;
+}
+
+.light {
+  background-color: #f5fffa;
+}
+
+/* .dark,
+.light {
+  margin: 0;
+  background-clip: content-box;
+  color: #000;
+  font-size: 24rpx;
+  line-height: 30rpx;
+  text-align: center;
+  border: 1rpx solid;
+  border-color: #e2e3e5;
+} */
+
+.item-hidden{
+  display:none;
+}
+
+.mini{
+  padding: 5rpx;
+  font-size: 12rpx;
+  color: #000;
+  text-align: center;
+  line-height: 16rpx;
+}
+
+.answer-item{
+  font-size: 40rpx;
+  line-height: 80rpx;
+  text-align: center;
+}
+
+.show_text{
+  font-size: 26rpx;
+  line-height: 16rpx;
+  text-align: center;
+  color: #6c757d;
+}
+
+
+.parent {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.child {
+  width: calc(11% - 7rpx); 
+  margin-bottom: 0 5px;
+  font-weight: 600;
+  font-size: 40rpx;
+  color: #618dff;
+  text-align: center;
+  background-color:#f2f3ff;
+  padding: 10px 6px;
+  box-sizing: border-box; 
+  border-radius: 6rpx;
+}
+
+.leftct{
+  font-size: 28rpx;
+  color: #6c757d;
+}
+
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: 4rpx solid;
+  border-color: #000;
+  border-radius: 6rpx;
+}
+
+.content-child {
+  width: calc(11.11%); 
+  /* background-color:#f2f3ff; */
+
+  box-sizing: border-box; 
+
+  margin: 0;
+  background-clip: content-box;
+  color: #000;
+  font-size: 36rpx;
+  line-height: 70rpx;
+  text-align: center;
+  /* border: 1rpx solid;
+  border-color: #e2e3e5; */
+}
+
+.border-left{
+  border-left: 1rpx solid;
+  border-color: #e2e3e5;
+}
+
+.border-top{
+  border-top: 1rpx solid;
+  border-left: 1rpx solid;
+  border-color: #e2e3e5;
+}
+
+.active {
+  background-color:#f2f3ff;
+}

@@ -1,0 +1,28 @@
+/**index.wxss**/
+page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.scrollarea {
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.block {
+  color: var(--td-text-color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.block-center {
+  width: 240px;
+  height: 240px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}

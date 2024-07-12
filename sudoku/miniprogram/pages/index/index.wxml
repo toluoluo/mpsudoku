@@ -1,0 +1,49 @@
+<!--index.wxml-->
+<view class="block">
+  <t-navbar
+    t-class-placeholder="t-navbar-placeholder"
+    t-class-content="t-navbar-content"
+    class="block"
+    title="数独天天玩"
+  />
+</view>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">   
+    <t-row>
+      <t-col span="24">
+      <view class="title">数独介绍： </view>  
+      <view class="text">数独是一种逻辑推理游戏，通常由9×9的方格组成，被分为9个3×3的小方块。游戏的目标是在每一行、每一列以及每个小方块中填入数字1到9，使得每个数字在每一行、每一列和每个小方块中都恰好出现一次。</view>
+      </t-col>
+
+      <t-col span="24">
+        <view class="view">
+          <t-button
+            block
+            disabled
+            theme="light"
+            variant="text"
+          >开始游戏</t-button>
+        </view>
+
+        <view class="view link">
+          <t-link size="large" theme="success" content="简单" hover bindtap="linkToGame" data-level="1" />
+        </view>
+
+        <view class="view link">
+          <t-link size="large" theme="warning" content="中级" hover bindtap="linkToGame" data-level="2"/>
+        </view>
+
+        <view class="view link">
+          <t-link size="large" theme="primary" content="困难" hover bindtap="linkToGame" data-level="3"/>
+        </view>
+
+        <view class="view link">
+          <t-link size="large" theme="danger" content="专家" hover bindtap="linkToGame" data-level="4"/>
+        </view>
+       
+      </t-col>
+
+    </t-row>
+  </view>
+</scroll-view>

@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/games/games",
+    "pages/users/users"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "navigationBarTextStyle":"black"
+  },
+  "componentFramework": "glass-easel",
+  "lazyCodeLoading": "requiredComponents",
+  "component": true,
+  "styleIsolation": "apply-shared",
+  "usingComponents": {
+    "t-navbar": "tdesign-miniprogram/navbar/navbar",
+    "t-icon": "tdesign-miniprogram/icon/icon"
+  }
+}
