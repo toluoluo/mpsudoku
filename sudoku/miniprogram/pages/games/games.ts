@@ -2,17 +2,18 @@
 import {sysWxReqPost, sysLocalSet} from "../../utils/libs";
 import { sysTimeStamp } from '../../utils/util';
 import { Toast } from 'tdesign-miniprogram';
+import { getlevel, formatTime, init81False, sameNumCellIndexs, connectCellIndexs, leftUndoCell, checkCells } from "./games_func";
 
 let timerInterval: number = 0;
-
+let steps: object[] = [];
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    currIndex: -1,
-    errCt: 0,
+    // 最大错误数
+    maxErrCt: 5,
     level: 0,
     level_str: '入门',
     nine: [0, 1, 2, 3, 4, 5, 6, 7, 8], 
@@ -24,15 +25,38 @@ Page({
     useSeconds:0,
     formattedTime: '00:00:00',
     adCt : 3 ,
-    active: false,
-    viewSels: [false],
 
-    // 步骤
-    actS: [],
+    active: false,
+    //选中的cell
+    selectCell: [false],
+    // 关联的cell
+    connectCell: [false],
+    // 相同数字的cell
+    sameNumCell: [false],
+    // 当前索引
+    currCellIndex: -1,
+    // 当前提示索引
+    currTipIndex: -1,
+    // 是否铅笔
+    isPencil: false,
+    
+    // 错误次数
+    errCt: 0,
+
+
+    
     // 问题
     ques: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     // 答案
     answer: [],
+    // 处理答案
+    doAnswer: [0],
+    // 剩余数字
+    leftCellNum: [0],
+    // 检测cell是否成功
+    checkCells:[false],
+    // 是否正确
+    isCollects:[false],
   },
 
 
@@ -43,7 +67,7 @@ Page({
     var that = this;
     that.setData({
       level: options.level,
-      level_str : this.getlevel(options.level),
+      level_str : getlevel(options.level),
     });
     console.log('game level link get: ', this.data.level);
 
@@ -54,17 +78,22 @@ Page({
       console.log('reponse data: ', data);
       if(data?.code == 0){
         let now = sysTimeStamp();
-        let tmp: boolean[] = [];
-        for(let i = 0; i < 81; i++){
-          tmp.push(false);
-        }
+        let ques   = data.data.question.split(',').map(Number);
+        let answer = data.data.answer.split(',').map(Number);
+        let doAnswer   = data.data.question.split(',').map(Number);
+        let left   = data.data.question.split(',').map(Number);
+        let checks: boolean[] = init81False();
+        let isCollects: boolean[] = init81False();
         // 设置本地数据
         that.setData({
-          ques: data.data.question.split(',').map(Number),
-          answer: data.data.answer.split(',').map(Number),
+          ques: ques,
+          answer: answer,
+          doAnswer: doAnswer,
           playId: data.data.play_id,
           doBeginAt: now,
-          viewSels: tmp,
+          leftCellNum: leftUndoCell(answer, left),
+          checkCells: checks,
+          isCollects: isCollects,
         });
         // 保存本地数据
         sysLocalSet('curr_question', data.data);
@@ -133,7 +162,7 @@ Page({
     timerInterval = setInterval(() => {
       this.setData({
         useSeconds: this.data.useSeconds + 1,
-        formattedTime: this.formatTime(this.data.useSeconds + 1)
+        formattedTime: formatTime(this.data.useSeconds + 1)
       });
       console.log("use seconds: ", this.data.useSeconds);
 
@@ -142,51 +171,20 @@ Page({
 
   stopTimer() {
     clearInterval(timerInterval);
-  },
-
-  formatTime(useSeconds: number) {
-    const h = this.padTime(Math.floor(useSeconds / 3600));
-    const m = this.padTime(Math.floor((useSeconds % 3600) / 60));
-    const s = this.padTime(useSeconds % 60);
-    return `${h}:${m}:${s}`;
-  },
-
-  padTime(time: number) {
-    return time < 10 ? `0${time}` : `${time}`;
-  },
-
-  getlevel(level: number) :string{
-    let rst: string = '入门';
-    switch(level){
-      case 0:
-        rst = '入门';
-        break;
-      case 1:
-        rst = '简单';
-        break;
-      case 2:
-        rst = '中级';
-        break;
-      case 3:
-        rst = '困难';
-        break;
-      case 4:
-        rst = '专家';
-        break;
-    }
-    return rst;
-  },
+  },  
 
   // 处理未填写的
   getUnfill(e: any){
     let index: number = Number(e.currentTarget.dataset.index);
-    let tmp: boolean[] = [];
-    for(let i = 0; i < 81; i++){
-      tmp.push(false);
-    }
-    tmp[index] = true;
+    let sels: boolean[] = init81False();
+    sels[index] = true;
+    let sames = sameNumCellIndexs(this.data.doAnswer, this.data.doAnswer[index]);
+    let conns = connectCellIndexs(index);
     this.setData({
-      viewSels: tmp
+      selectCell: sels,
+      sameNumCell: sames,
+      connectCell: conns,
+      currCellIndex: index,
     });
 
   },
@@ -194,24 +192,114 @@ Page({
   // 展示不可操作提示
   showFillTip(e: any){
     let index: number = Number(e.currentTarget.dataset.index);
-
-    let tmp: boolean[] = [];
-    for(let i = 0; i < 81; i++){
-      tmp.push(false);
-    }
-    tmp[index] = true;
+    let sels: boolean[] = init81False();
+    sels[index] = true;
+    let sames = sameNumCellIndexs(this.data.doAnswer, this.data.doAnswer[index]);
+    let conns = connectCellIndexs(index);
     this.setData({
-      viewSels: tmp
-    });
-    
-    Toast({
-      context: this,
-      selector: '#t-toast',
-      message: '预填充数不可写',
+      selectCell: sels,
+      sameNumCell: sames,
+      connectCell: conns,
+      currCellIndex: index,
     });
   },
 
+  doUnfill(e: any){
+    let idx: number = Number(e.currentTarget.dataset.idxfill);
+    let index: number = this.data.currCellIndex;
 
+    console.log('do unfill idx: ', idx);
+    console.log('do unfill index: ', index);
+    console.log('do unfill ques : ', this.data.ques);
 
+    // 预填
+    if(this.data.ques[index] > 0){
+      Toast({
+          context: this,
+          selector: '#t-toast',
+          message: '预填充数不可写',
+      });
+      return;
+    }
+    // 判断选项是否填完
+    if(this.data.leftCellNum[idx] <= 0){
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '选项已填完',
+      });
+      return;
+    }
+    // 写入doAnswer数组
+    let doArr: number[] = this.data.doAnswer;
+    doArr[index] = idx+1;
+    // leftCellNum 减一
+    let leftCell: number[] = this.data.leftCellNum;
+    leftCell[idx] = leftCell[idx] - 1;
+
+    // 添加步骤队列
+    steps.push({"index":index, "val":idx+1, "type": this.data.isPencil ? 1 : 2});
+
+    // 判断是否正确
+    let isCollect: boolean = this.data.answer[index] == (idx+1)
+    let errCt: number = this.data.errCt;
+    if(isCollect == false){
+        errCt += 1;
+        if(errCt > this.data.maxErrCt){
+          Toast({
+            context: this,
+            selector: '#t-toast',
+            message: '错误已超过5次，恢复或重玩',
+          });
+          return;
+        }
+    }
+    // 判断行列方格是否正确
+    let chCells:number[] = checkCells(doArr, index);
+    if(chCells.length > 0 && isCollect){
+      for(let k=0; k<chCells.length; k++){
+        let checks: boolean[] = init81False();
+        checks[chCells[k]] = true;
+        this.setData({
+          checkCells: checks,
+        });
+      }
+    }
+
+    let isCollects = this.data.isCollects;
+    isCollects[index] = isCollect;
+
+    // 判断是否完成
+    let isFinish = true;
+    for(let a=0; a<doArr.length; a++){
+      if(doArr[a] <= 0){
+        isFinish = false;
+      }
+    }
+    if(isFinish){
+      // 上传结果
+      // 弹窗
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '恭喜，您已成功闯关',
+      });
+      return;
+    }
+
+    console.log('do unfill answer: ', doArr);
+
+    // 重刷页面所有数据
+    let checks: boolean[] = init81False();
+    this.setData({
+      errCt:         errCt,
+      currCellIndex: index,
+      currTipIndex:  idx,
+      leftCellNum:   leftCell,
+      doAnswer:      doArr,
+      isCollects:    isCollects,
+      checkCells:    checks,
+    });
+  },
 
 })

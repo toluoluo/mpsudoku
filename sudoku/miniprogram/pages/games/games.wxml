@@ -40,13 +40,14 @@
   <t-toast id="t-toast" />
   <view class="view">
     <view class="content">
-      <view wx:for="{{eighty}}" class="content-child {{index > 8 ? 'border-top' : 'border-left'}}  {{ (index==0 || index==1 || index==2 || index==6 || index==7 || index==8 || index==9 || index==10 || index==11 || index==15 || index==16 || index==17 || index==18 || index==19 || index==20 || index==24 || index==25 || index==26 || index==30 || index==31 || index==32 || index==39 || index==40 || index==41 || index==48 || index==49 || index==50 || index==54 || index==55 || index==56 || index==60 || index==61 || index==62 || index==63 || index==64 || index==65 || index==69 || index==70 || index==71 || index==72 || index==73 || index==74 || index==78 || index==79 || index==80) ? 'dark' : 'light'}} {{ viewSels[index] ? 'active' : ''}} " data-index="{{index}}" bind:tap="{{ques[index] > 0 ? 'showFillTip' : 'getUnfill' }}">
+      <view wx:for="{{eighty}}" class="content-child {{index > 8 ? 'border-top' : 'border-left'}}  {{ connectCell[index] ? 'light' : ''}}  {{ sameNumCell[index] ? 'dark' : ''}} {{ selectCell[index] ? 'active' : ''}} " data-index="{{index}}" bind:tap="{{ques[index] > 0 ? 'showFillTip' : 'getUnfill' }}">
         <!-- {{ques[index] > 0 ? ques[index] : ' '}}      -->
-        <view wx:if="{{ques[index] > 0}}" > {{index}}</view>
+        <view wx:if="{{ques[index] > 0}}" > {{ques[index]}}</view>
         <view wx:else>
-        <t-row>
-        <t-col wx:for="{{nine}}" span="8" wx:for-index="i"><view class="mini">{{index}}</view></t-col>
-        </t-row>
+        <view id="item-{{index}}" class="{{doAnswer[index] > 0 ? '' : 'item-hidden'}} {{isCollects[index] ? '' : 'isCollect'}}">{{doAnswer[index] > 0 ? doAnswer[index] : ''}}</view>
+        <!-- <t-row class="{{doAnswer[index] == 0 ? '' : 'item-hidden'}}"> 
+        <t-col wx:for="{{nine}}" span="8" wx:for-index="i"><view class="mini"></view></t-col>
+        </t-row> -->
         </view>
       </view>
     </view>    
@@ -63,15 +64,9 @@
 
   <view class="view">
     <view class="parent">
-      <view class="child">1 <view class="leftct">1</view> </view>
-      <view class="child">2 <view class="leftct">1</view> </view>
-      <view class="child">3 <view class="leftct">1</view> </view>
-      <view class="child">4 <view class="leftct">1</view> </view>
-      <view class="child">5 <view class="leftct">1</view> </view>
-      <view class="child">6 <view class="leftct">1</view></view>
-      <view class="child">7 <view class="leftct">1</view> </view>
-      <view class="child">8 <view class="leftct">1</view> </view>
-      <view class="child">9 <view class="leftct">1</view> </view>
+      <block wx:for="{{leftCellNum}}" wx:for-index="idx" wx:for-item="ite">
+      <view class="child" bind:tap="doUnfill" data-idxfill="{{idx}}">{{idx + 1}}<view class="leftct">{{ite}}</view></view> 
+      </block>     
     </view>
   </view>
 
