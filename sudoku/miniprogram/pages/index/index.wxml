@@ -25,21 +25,23 @@
             variant="text"
           >开始游戏</t-button>
         </view>
-
         <view class="view link">
-          <t-link size="large" theme="success" content="简单" hover bindtap="linkToGame" data-level="1" />
+          <t-link size="large" theme="success" content="入门" hover bindtap="linkToGame" data-level="1" />
+        </view>
+        <view class="view link">
+          <t-link size="large" theme="success" content="简单" hover bindtap="linkToGame" data-level="2" />
         </view>
 
         <view class="view link">
-          <t-link size="large" theme="warning" content="中级" hover bindtap="linkToGame" data-level="2"/>
+          <t-link size="large" theme="warning" content="中级" hover bindtap="linkToGame" data-level="3"/>
         </view>
 
         <view class="view link">
-          <t-link size="large" theme="primary" content="困难" hover bindtap="linkToGame" data-level="3"/>
+          <t-link size="large" theme="primary" content="困难" hover bindtap="linkToGame" data-level="4"/>
         </view>
 
         <view class="view link">
-          <t-link size="large" theme="danger" content="专家" hover bindtap="linkToGame" data-level="4"/>
+          <t-link size="large" theme="danger" content="专家" hover bindtap="linkToGame" data-level="5"/>
         </view>
        
       </t-col>

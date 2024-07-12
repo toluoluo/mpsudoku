@@ -2,7 +2,7 @@
 import {sysWxReqPost, sysLocalSet} from "../../utils/libs";
 import { sysTimeStamp } from '../../utils/util';
 import { Toast } from 'tdesign-miniprogram';
-import { getlevel, formatTime, init81False, sameNumCellIndexs, connectCellIndexs, leftUndoCell, checkCells } from "./games_func";
+import { getlevel, formatTime, init81False, sameNumCellIndexs, connectCellIndexs, leftUndoCell, checkCells, sleepAt } from "./games_func";
 
 let timerInterval: number = 0;
 let steps: object[] = [];
@@ -43,8 +43,6 @@ Page({
     // 错误次数
     errCt: 0,
 
-
-    
     // 问题
     ques: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     // 答案
@@ -64,12 +62,11 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options: any) {
-    var that = this;
-    that.setData({
+    this.setData({
       level: options.level,
-      level_str : getlevel(options.level),
+      level_str : getlevel(Number(options.level)),
     });
-    console.log('game level link get: ', this.data.level);
+    console.log('game level link get: ', this.data.level_str);
 
     // 获取问题
     // 发送 res.code 到后台换取 openId, sessionKey, unionId
@@ -81,24 +78,24 @@ Page({
         let ques   = data.data.question.split(',').map(Number);
         let answer = data.data.answer.split(',').map(Number);
         let doAnswer   = data.data.question.split(',').map(Number);
-        let left   = data.data.question.split(',').map(Number);
+        // let left   = data.data.question.split(',').map(Number);
         let checks: boolean[] = init81False();
         let isCollects: boolean[] = init81False();
         // 设置本地数据
-        that.setData({
+        this.setData({
           ques: ques,
           answer: answer,
           doAnswer: doAnswer,
           playId: data.data.play_id,
           doBeginAt: now,
-          leftCellNum: leftUndoCell(answer, left),
+          leftCellNum: leftUndoCell(doAnswer),
           checkCells: checks,
           isCollects: isCollects,
         });
         // 保存本地数据
         sysLocalSet('curr_question', data.data);
         sysLocalSet('curr_question_do_begin_at', now);
-        // that.startTimer();
+        this.startTimer();
       }
     })
     .catch((err: any) => {
@@ -208,6 +205,16 @@ Page({
     let idx: number = Number(e.currentTarget.dataset.idxfill);
     let index: number = this.data.currCellIndex;
 
+    // 预填
+    if(index < 0){
+      Toast({
+          context: this,
+          selector: '#t-toast',
+          message: '请选择要填写的方格',
+      });
+      return;
+    }
+
     console.log('do unfill idx: ', idx);
     console.log('do unfill index: ', index);
     console.log('do unfill ques : ', this.data.ques);
@@ -233,9 +240,6 @@ Page({
     // 写入doAnswer数组
     let doArr: number[] = this.data.doAnswer;
     doArr[index] = idx+1;
-    // leftCellNum 减一
-    let leftCell: number[] = this.data.leftCellNum;
-    leftCell[idx] = leftCell[idx] - 1;
 
     // 添加步骤队列
     steps.push({"index":index, "val":idx+1, "type": this.data.isPencil ? 1 : 2});
@@ -255,16 +259,18 @@ Page({
         }
     }
     // 判断行列方格是否正确
-    let chCells:number[] = checkCells(doArr, index);
-    if(chCells.length > 0 && isCollect){
-      for(let k=0; k<chCells.length; k++){
-        let checks: boolean[] = init81False();
-        checks[chCells[k]] = true;
-        this.setData({
-          checkCells: checks,
-        });
-      }
-    }
+    // let chCells:number[] = checkCells(doArr, index);
+    // console.log('do check chcells: ', chCells);
+    // if(chCells.length > 0 && isCollect){
+    //   for(let k=0; k<chCells.length; k++){
+    //     let checks: boolean[] = init81False();
+    //     checks[chCells[k]] = true;
+    //     this.setData({
+    //       checkCells: checks,
+    //     });
+    //     sleepAt(); 
+    //   }
+    // }
 
     let isCollects = this.data.isCollects;
     isCollects[index] = isCollect;
@@ -276,6 +282,24 @@ Page({
         isFinish = false;
       }
     }
+    
+    console.log('do unfill answer: ', doArr);
+    console.log('do origin answer: ', this.data.answer);
+
+    // 重刷页面所有数据
+    let checks: boolean[] = init81False();
+    // 重新计算left cell
+    let left = leftUndoCell(doArr);
+    this.setData({
+      errCt:         errCt,
+      currCellIndex: index,
+      currTipIndex:  idx,
+      leftCellNum:   left,
+      doAnswer:      doArr,
+      isCollects:    isCollects,
+      checkCells:    checks,
+    });
+
     if(isFinish){
       // 上传结果
       // 弹窗
@@ -286,20 +310,15 @@ Page({
       });
       return;
     }
+  },
 
-    console.log('do unfill answer: ', doArr);
-
-    // 重刷页面所有数据
-    let checks: boolean[] = init81False();
+  isPencilCheck(){
+    let isPencil :boolean = this.data.isPencil;
+    isPencil = isPencil ? false : true;
     this.setData({
-      errCt:         errCt,
-      currCellIndex: index,
-      currTipIndex:  idx,
-      leftCellNum:   leftCell,
-      doAnswer:      doArr,
-      isCollects:    isCollects,
-      checkCells:    checks,
+      isPencil: isPencil,
     });
+    console.log('is pencil : ', this.data.isPencil);
   },
 
 })

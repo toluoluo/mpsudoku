@@ -10,19 +10,19 @@ export function init81False(): boolean[]{
 export function getlevel(level: number) :string{
     let rst: string = '入门';
     switch(level){
-      case 0:
+      case 1:
         rst = '入门';
         break;
-      case 1:
+      case 2:
         rst = '简单';
         break;
-      case 2:
+      case 3:
         rst = '中级';
         break;
-      case 3:
+      case 4:
         rst = '困难';
         break;
-      case 4:
+      case 5:
         rst = '专家';
         break;
     }
@@ -147,13 +147,16 @@ function getSameCell(answer: number[], val: number): number[]{
     return rst;
 }
 
-export function leftUndoCell(answer: number[], doAnswer: number[]):number[]{
-    let rst :number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for(let i=0; i < answer.length; i++){
-        if(doAnswer[i] == 0){
-            rst[answer[i] - 1] = rst[answer[i] - 1] + 1;
+export function leftUndoCell(doAnswer: number[]):number[]{
+    let rst :number[] = [9, 9, 9, 9, 9, 9, 9, 9, 9];
+    for(let i=0; i<rst.length; i++){
+        for(let j = 0; j < doAnswer.length; j++){
+            if(doAnswer[j] == i + 1){
+                rst[i] = rst[i] - 1;
+            }
         }
     }
+
     return rst;
 }
 
@@ -198,4 +201,12 @@ function checkIsDone(doAnswer:number[], cells: number[]):number[]{
         rst.push(...cells);
     }
     return rst;
+}
+
+export async function sleepAt() {
+    await sleep(1000); 
+}
+
+function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

@@ -18,29 +18,10 @@
   </t-row>
   </view>
 
-  <!-- <view >
-    <t-row class="play-view">
-    <t-col wx:for="{{nine}}" wx:for-index="i" span="8" t-class="{{i%2 === 0 ? 'dark' : 'light'}}" >
-      <t-row>
-      <t-col id="item-{{i}}{{j}}"  wx:for="{{nine}}" wx:for-index="j" span="8"  t-class="mini">
-        <view id="item-txt-{{i}}{{j}}" class="answer-item ">{{i}}{{j}}</view>
-        <view id="tip-{{i}}{{j}}{{k}}" class="item-hidden">
-          <t-row>
-          <t-col  wx:for="{{nine}}" wx:for-index="k" span="8">
-            <text>{{k}}</text>
-          </t-col>
-          </t-row>
-        </view>
-      </t-col>
-      </t-row>
-    </t-col>
-    </t-row>
-  </view>  -->
-
   <t-toast id="t-toast" />
   <view class="view">
     <view class="content">
-      <view wx:for="{{eighty}}" class="content-child {{index > 8 ? 'border-top' : 'border-left'}}  {{ connectCell[index] ? 'light' : ''}}  {{ sameNumCell[index] ? 'dark' : ''}} {{ selectCell[index] ? 'active' : ''}} " data-index="{{index}}" bind:tap="{{ques[index] > 0 ? 'showFillTip' : 'getUnfill' }}">
+      <view wx:for="{{eighty}}" class="content-child {{index > 8 ? 'border-top' : 'border-left'}} {{ques[index] > 0 ? 'light' : ''}}  {{ connectCell[index] ? 'dark' : ''}} {{ checkCells[index] ? 'checkCell' : ''}} {{ sameNumCell[index] ? 'same' : ''}} {{ selectCell[index] ? 'active' : ''}} " data-index="{{index}}" bind:tap="{{ques[index] > 0 ? 'showFillTip' : 'getUnfill' }}">
         <!-- {{ques[index] > 0 ? ques[index] : ' '}}      -->
         <view wx:if="{{ques[index] > 0}}" > {{ques[index]}}</view>
         <view wx:else>
@@ -57,7 +38,7 @@
     <t-grid>
       <t-grid-item text="撤回" icon="rollback" bindclick="onClick"/>
       <t-grid-item text="清除" icon="clear-formatting" bindclick="onClick" />
-      <t-grid-item text="铅笔" icon="pen-ball" bindclick="onClick" badge-props="{{ {count: 'off'} }}"/>
+      <t-grid-item text="铅笔" icon="pen-ball" bind:tap="isPencilCheck" badge-props="{{ {count: isPencil ? 'on' : 'off' } }}"/>
       <t-grid-item text="提示" icon="gesture-press" bindclick="onClick" badge-props="{{ {count: adCt} }}"/>
     </t-grid>
   </view>

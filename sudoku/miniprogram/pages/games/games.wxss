@@ -25,7 +25,11 @@
 }
 
 .dark {
-  background-color: #e2e3e5;
+  background-color: #f3f3f3;
+}
+
+.same {
+  background-color: #dcdcdc;
 }
 
 .item-hidden{
@@ -124,4 +128,8 @@
 
 .isCollect {
   color: #ff9285;
+}
+
+.checkCell{
+  background-color: #f2f3ff;
 }
