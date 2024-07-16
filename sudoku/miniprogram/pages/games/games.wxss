@@ -12,6 +12,12 @@
   margin: 0rpx;
   box-sizing: border-box;
 } 
+.block {
+  color: var(--td-text-color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .play-view{
   margin: 10rpx;
@@ -145,7 +151,7 @@
 .go-back-block {
   position: relative;
   width: 240px;
-  height: 240px;
+  height: 80px;
   background: var(--td-bg-color-container);
   border-radius: 16rpx;
 }
@@ -155,4 +161,8 @@
   left: 50%;
   margin-left: -32rpx;
   bottom: calc(-1 * (48rpx + 64rpx));
+}
+
+.pop-margin{
+  margin-top: 30rpx;
 }

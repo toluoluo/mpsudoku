@@ -41,28 +41,88 @@
 
   <view>
     <t-grid>
-      <t-grid-item text="撤回" icon="rollback" bind:tap="withdraw"/>
-      <t-grid-item text="清除" icon="clear-formatting" bind:tap="clean" />
-      <t-grid-item text="铅笔" icon="pen-ball" bind:tap="isPencilCheck" badge-props="{{ {count: isPencil ? 'on' : 'off' } }}"/>
-      <t-grid-item text="提示" icon="gesture-press" bind:tap="doTip" badge-props="{{ {count: adCt} }}"/>
+      <t-grid-item text="撤回" icon="rollback" bind:tap="{{isDone ? '' : 'withdraw'}}"/>
+      <t-grid-item text="清除" icon="clear-formatting" bind:tap="{{isDone ? '' : 'clean'}}" />
+      <t-grid-item text="铅笔" icon="pen-ball" bind:tap="{{isDone ? '' : 'isPencilCheck' }}" badge-props="{{ {count: isPencil ? 'on' : 'off' } }}"/>
+      <t-grid-item text="提示" icon="gesture-press" bind:tap="{{isDone ? '' : 'doTip' }}" badge-props="{{ {count: adCt} }}"/>
     </t-grid>
   </view>
 
   <view class="view">
     <view class="parent">
       <block wx:for="{{leftCellNum}}" wx:for-index="idx" wx:for-item="ite">
-      <view class="child {{idx == currTipIndex ? 'child-checked' : ''}}" bind:tap="{{isPencil == false ? 'doUnfill' : 'doPencil'}}" data-idxfill="{{idx}}">{{idx + 1}}<view class="leftct">{{ite}}</view></view> 
+      <view class="child {{idx == currTipIndex ? 'child-checked' : ''}}" bind:tap="{{isDone ? '' : (isPencil == false ? 'doUnfill' : 'doPencil')}}" data-idxfill="{{idx}}">{{idx + 1}}<view class="leftct">{{ite}}</view></view> 
       </block>     
     </view>
   </view>
 
-  <t-popup visible="{{isShowSuccess}}" bind:visible-change="onVisibleChange" placement="center">
+    <t-popup visible="{{isShowMaxErr}}" bind:visible-change="onVisibleChange" placement="center">
+    <view style="height: 300rpx;">
+      <t-row>
+        <t-col span="24">
+        <view class="block text pop-margin">错误已超过{{maxErrCt}}次</view> 
+        <view class="block text" style="margin-bottom: 30rpx;"> 请重新开始游戏 </view> 
+        </t-col>
+
+        <t-col span="12">
+          <view class="view">
+            <t-button
+              block
+              variant="outline"
+              bind:tap="gotoindex"
+              size="small"
+            >返回主页</t-button>
+          </view>
+        </t-col>
+
+        <t-col span="12">
+          <view class="view">
+            <t-button
+              block
+              theme="primary"
+              variant="outline"
+              bind:tap="showPop"
+              size="small"
+            >开始新游戏</t-button>
+          </view>
+        </t-col>
+      </t-row>
+    </view>
     <view class="go-back-block">
       <t-icon t-class="close-btn" name="close-circle" size="32" color="#fff" bind:tap="onClose" />
     </view>
   </t-popup>
 
-  
+  <t-popup visible="{{isPop}}" bind:visible-change="onVisibleChangeToNewGame" placement="bottom">
+    <view class="block">
+    <t-row>
+    <t-col span="24">
+        <view class="block view link text">
+          <text>请选中游戏难度：</text>
+        </view>
+        <view class="block view link">
+          <t-link size="large" content="入门" hover bindtap="linkToGame" data-level="1" />
+        </view>
+        <view class="block view link">
+          <t-link size="large" theme="success" content="简单" hover bindtap="linkToGame" data-level="2" />
+        </view>
+
+        <view class="block view link">
+          <t-link size="large" theme="warning" content="中级" hover bindtap="linkToGame" data-level="3"/>
+        </view>
+
+        <view class="block view link">
+          <t-link size="large" theme="primary" content="困难" hover bindtap="linkToGame" data-level="4"/>
+        </view>
+
+        <view class="block view link">
+          <t-link size="large" theme="danger" content="专家" hover bindtap="linkToGame" data-level="5"/>
+        </view>
+    </t-col>
+    </t-row>
+    </view>
+  </t-popup>
+
 
 </view>
 

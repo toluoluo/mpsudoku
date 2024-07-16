@@ -1,0 +1,44 @@
+/* pages/succ/succ.wxss *//**index.wxss**/
+page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .scrollarea {
+    flex: 1;
+    overflow-y: hidden;
+  }
+
+  .container{
+    background-color: #f2f3ff;
+    padding: 20rpx;
+  }
+  
+  .block {
+    color: var(--td-text-color-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .block-center {
+    width: 240px;
+    height: 240px;
+  }
+  
+  .link {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+  
+  .succ-title{
+    margin-top: 100rpx;
+    margin-bottom: 30rpx;
+    color: #198754;
+
+  }
+
+  .succ-text{
+    margin-bottom: 30rpx;
+  }

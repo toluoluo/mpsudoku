@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/games/games",
-    "pages/users/users"
+    "pages/users/users",
+    "pages/succ/succ"
   ],
   "window": {
     "navigationStyle": "custom",

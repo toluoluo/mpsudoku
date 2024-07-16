@@ -12,56 +12,34 @@
   <view class="container">   
     <t-row>
       <t-col span="24">
-      <view class="title">数独介绍： </view>  
-      <view class="text">数独是一种逻辑推理游戏，通常由9×9的方格组成，被分为9个3×3的小方块。游戏的目标是在每一行、每一列以及每个小方块中填入数字1到9，使得每个数字在每一行、每一列和每个小方块中都恰好出现一次。</view>
+      <view class="block title succ-title">恭喜您，游戏获胜啦！ </view>  
+      <view class="block text">等级：{{ level_str }}</view>
+      <view class="block text succ-text">用时：{{ useTime }}</view>
       </t-col>
 
-      <!-- <t-col span="24">
+      <t-col span="12">
         <view class="view">
           <t-button
             block
-            theme="light"
-            bind:tap="linktosucc"
-          >查看我的挑战历史</t-button>
+            variant="outline"
+            bind:tap="gotoindex"
+          >返回主页</t-button>
         </view>
-      </t-col> -->
+      </t-col>
 
-      <t-col span="24">
+      <t-col span="12">
         <view class="view">
           <t-button
             block
-            theme="light"
+            theme="primary"
+            variant="outline"
             bind:tap="showPop"
           >开始新游戏</t-button>
         </view>
       </t-col>
-
-       <t-col span="24">
-        <block wx:if="{{isOld}}">
-          <view class="view">
-            <t-button
-              block
-              theme="light"
-              bind:tap="continueGame" >继续游戏</t-button>
-          </view>
-          <view  class="view block">
-            <text class="text btn-tip" decode="true">当前游戏：等级-{{level_str}} | 用时-{{formattedTime}}</text>
-          </view>
-        </block>
-        <block wx:else>
-          <view class="view">
-            <t-button
-              block
-              theme="light"
-              disabled 
-            >继续游戏</t-button>
-          </view>
-        </block>
-      </t-col>
-      
     </t-row>
-     
   </view>
+
   <t-popup visible="{{isPop}}" bind:visible-change="onVisibleChange" placement="bottom">
     <view>
     <t-row>
@@ -91,4 +69,5 @@
     </t-row>
     </view>
   </t-popup>
+
 </scroll-view>

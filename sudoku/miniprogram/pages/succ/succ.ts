@@ -1,32 +1,45 @@
-// index.ts
-// 获取应用实例
+import { formatTime, getlevel, sysWxReqPost } from "../../utils/libs";
 
-import {sysLocalGet, formatTime, getlevel} from "../../utils/libs";
-
-// const app = getApp<IAppOption>()
-// const defaultAvatarUrl: string= 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
-
+// pages/succ/succ.ts
 Page({
+
+  /**
+   * 页面的初始数据
+   */
   data: {
+    useSeconds: 0,
+    level: 0,
+    level_str: '入门',
+    useTime : '',
     isPop: false,
-    level_str: '',
-    formattedTime: '',
-    isOld: false,
+
   },
 
-  onLoad(){
-    let old = sysLocalGet('curr_ques_status');
-    // console.log('old data: ', old);
-    if(old !== '' && old !== false){
-      // console.log('old data run herer');
-      this.setData({
-        isOld: true,
-        formattedTime: formatTime(old.use_seconds),
-        level_str: getlevel(Number(old.level)),
-      });
-    }
-    // console.log('old this data isole: ', this.data.isOld);
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad(options: any) {
+    let level = Number(options.level);
+    let play_id = Number(options.id);
+    let seconds = Number(options.seconds);
+
+    this.setData({
+      level: level,
+      level_str: getlevel(level),
+      useTime: formatTime(seconds),
+    });
+
+    sysWxReqPost('/v1/sudoku/question/done', {
+      'play_id': play_id,
+      'use_time': seconds,
+      'use_ad':0,
+      'is_pass':1,
+    })
+    .then((data:any) =>{})
+    .catch((err: any) =>{});
+
   },
+
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
@@ -45,7 +58,6 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide() {
-    console.log('go on hide...');
 
   },
 
@@ -53,14 +65,13 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload() {
-    
+
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
-    
 
   },
 
@@ -78,12 +89,11 @@ Page({
 
   },
 
-  continueGame(){
+  gotoindex(){
     wx.redirectTo({
-      url: '../games/games?level=10',
-    })
+      url: '../index/index',
+    });
   },
-  
   linkToGame(e: any) {
     var level = e.currentTarget.dataset.level;
     console.log('game level: ', level);
@@ -103,12 +113,5 @@ Page({
       isPop: e.detail.visible,
     });
   },
-
-  linktosucc() {
-    wx.redirectTo({
-      url: '../succ/succ?level=1&play_id=1&seconds=125',
-    });
-  },
-
 
 })

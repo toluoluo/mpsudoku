@@ -1,5 +1,5 @@
 // pages/games/games.ts
-import {sysWxReqPost, sysLocalSet, formatTime, getlevel} from "../../utils/libs";
+import {sysWxReqPost, sysLocalSet, formatTime, getlevel, sysLocalGet} from "../../utils/libs";
 import { sysTimeStamp } from '../../utils/util';
 import { Toast } from 'tdesign-miniprogram';
 import { init81False, sameNumCellIndexs, connectCellIndexs, leftUndoCell, checkCells, sleepAt } from "./games_func";
@@ -59,7 +59,10 @@ Page({
     //
     tipItems: Array(81),
     isDone: false,
-    isShowGoback: false,
+    // 展示最大错误弹出框
+    isShowMaxErr: false,
+    // 展示跳转性游戏选择弹出框
+    isPop: false,
   },
 
 
@@ -67,8 +70,47 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options: any) {
+
+    let level = options.level;
+
+    if(level == 10){
+      let old = sysLocalGet('curr_ques_status');
+      if(old !== '' && old !== false){
+        let index = Number(old.curr_cell_index);
+        let sels: boolean[] = init81False();
+        sels[index] = true;
+        let sames = sameNumCellIndexs(this.data.doAnswer, this.data.doAnswer[index]);
+        let conns = connectCellIndexs(index);
+        this.setData({
+          level:old.level,
+          level_str: getlevel(Number(old.level)),
+          formattedTime: formatTime(old.use_seconds),
+          useSeconds: Number(old.use_seconds),
+          playId: Number(old.play_id),
+          ques: old.ques,
+          answer: old.answer,
+          doAnswer: old.do_answer,
+          errCt: Number(old.errCt),
+          isCollects: old.is_collects,
+          currCellIndex: index,
+          adCt: Number(old.ad_ct),
+          leftCellNum: old.left_cell_num,
+          sameNumCell: sames,
+          connectCell: conns,
+          selectCell: sels,
+          tipItems: old.tip_items,
+          currTipIndex: Number(old.curr_cell_index),
+          isPencil: Boolean(old.is_pencil),
+        });
+        this.startTimer();
+        return;
+      }else{
+        level = 1;
+      }
+    }
+
     this.setData({
-      level: options.level,
+      level: level,
       level_str : getlevel(Number(options.level)),
     });
     // console.log('game level link get: ', this.data.level_str);
@@ -134,12 +176,30 @@ Page({
    */
   onUnload() {
     console.log('go on unload...');
+    steps = [];
+    timerInterval = 0;
     if(this.data.isDone === false){
       this.stopTimer();
       this.saveQues();
+
+      if(this.data.errCt >= this.data.maxErrCt){
+        sysLocalSet('curr_ques_status', '');
+      }
+
+      // 记录未完成的游戏
+      sysWxReqPost('/v1/sudoku/question/done', {
+        'play_id': this.data.playId,
+        'use_time': this.data.playId,
+        'use_ad':0,
+        'is_pass': this.data.isDone ? 1 : 2,
+      })
+      .then((data:any) =>{})
+      .catch((err: any) =>{});
     }else{
       sysLocalSet('curr_ques_status', '');
     }
+
+    
   },
 
   /**
@@ -260,14 +320,18 @@ Page({
     let errCt: number = this.data.errCt;
     if(isCollect == false){
         errCt += 1;
-        if(errCt > this.data.maxErrCt){
-          Toast({
-            context: this,
-            selector: '#t-toast',
-            message: '错误已超过5次，恢复或重玩',
-          });
-          return;
-        }
+    }
+    if(errCt > this.data.maxErrCt){
+      this.stopTimer();
+      // Toast({
+      //   context: this,
+      //   selector: '#t-toast',
+      //   message: '错误已超过'+this.data.maxErrCt+'次，请重新开始游戏',
+      // });
+      this.setData({
+        isShowMaxErr:true,
+      })
+      return;
     }
     // 判断行列方格是否正确
     // let chCells:number[] = checkCells(doArr, index);
@@ -312,12 +376,17 @@ Page({
     if(isFinish){
       // 上传结果
       // 弹窗
-      Toast({
-        context: this,
-        selector: '#t-toast',
-        message: '恭喜，您已成功闯关',
+      this.setData({
+        isDone: true,
       });
-      return;
+      // 清空数据
+      this.stopTimer();
+      steps = [];
+      sysLocalSet('curr_ques_status', '');
+      sleepAt();
+      wx.redirectTo({
+        url: '../succ/succ?level='+this.data.level+'&id='+this.data.playId+'&seconds='+this.data.useSeconds,
+      });
     }
   },
 
@@ -531,25 +600,8 @@ Page({
     return rst;
   }, 
 
-  showGobackPop(){
-    this.setData({
-      isShowGoback: true
-    });
-  },
-  onVisibleChange(e:any) {
-    this.setData({
-      isShowGoback: e.detail.visible,
-    });
-  },
-  onClose() {
-    this.setData({
-      isShowGoback: false,
-    });
-  },
 
   gotoindex(){
-    console.log('go to index.....');
-
     if(this.data.isDone === false){
       this.stopTimer();
       this.saveQues();
@@ -575,8 +627,54 @@ Page({
       left_cell_num: this.data.leftCellNum,
       use_seconds: this.data.useSeconds,
       ad_ct: this.data.adCt,
+      tip_items: this.data.tipItems,
+      curr_tip_index: this.data.currTipIndex,
+      is_pencil: this.data.isPencil,
     });
   },
+
+  showGobackPop(){
+    this.setData({
+      isShowMaxErr: true
+    });
+  },
+  onVisibleChange(e:any) {
+    this.setData({
+      isShowMaxErr: e.detail.visible,
+    });
+  },
+  onClose() {
+    this.setData({
+      isShowMaxErr: false,
+    });
+  },
+
+  linktoindex(){
+    wx.redirectTo({
+      url: '../index/index',
+    });
+  },
+  linkToGame(e: any) {
+    var level = e.currentTarget.dataset.level;
+    console.log('game level: ', level);
+    wx.redirectTo({
+      url: '../games/games?level='+level,
+    })
+  },
+
+  // 弹出新游戏选择
+  showPop(e: any) {
+    this.setData({
+        isPop: true
+      }
+    );
+  },
+  onVisibleChangeToNewGame(e: any) {
+    this.setData({
+      isPop: e.detail.visible,
+    });
+  },
+
 
 
 })

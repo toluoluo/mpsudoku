@@ -1,0 +1,11 @@
+{
+  "component": true,
+  "usingComponents": {
+    "t-col": "tdesign-miniprogram/col/col",
+    "t-row": "tdesign-miniprogram/row/row",
+    "t-link": "tdesign-miniprogram/link/link",
+    "t-divider": "tdesign-miniprogram/divider/divider",
+    "t-popup": "tdesign-miniprogram/popup/popup",
+    "t-button": "tdesign-miniprogram/button/button"
+  }
+}
