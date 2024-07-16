@@ -6,7 +6,7 @@ export const sysLocalSet = function (key: string, val: any){
 }
 
 export const sysLocalGet = function (key: string) {
-  return wx.getStorageSync(key);
+  return wx.getStorageSync(key) || false;
 }
 
 // 生成请求参数
@@ -54,4 +54,37 @@ export const sysWxReqPost = function(uri: string, data: Record<string, any>){
       }
     });
   })
+}
+
+export function formatTime(useSeconds: number) {
+  const h = padTime(Math.floor(useSeconds / 3600));
+  const m = padTime(Math.floor((useSeconds % 3600) / 60));
+  const s = padTime(useSeconds % 60);
+  return `${h}:${m}:${s}`;
+}
+
+function padTime(time: number) {
+  return time < 10 ? `0${time}` : `${time}`;
+}
+
+export function getlevel(level: number) :string{
+  let rst: string = '入门';
+  switch(level){
+    case 1:
+      rst = '入门';
+      break;
+    case 2:
+      rst = '简单';
+      break;
+    case 3:
+      rst = '中级';
+      break;
+    case 4:
+      rst = '困难';
+      break;
+    case 5:
+      rst = '专家';
+      break;
+  }
+  return rst;
 }

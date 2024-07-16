@@ -4,3 +4,9 @@ export interface GlobalUser{
   avatar: string,
   level: number,
 }
+
+export interface Step{
+  index: number,
+  val: number,
+  optType: number,
+}

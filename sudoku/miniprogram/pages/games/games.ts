@@ -1,11 +1,12 @@
 // pages/games/games.ts
-import {sysWxReqPost, sysLocalSet} from "../../utils/libs";
+import {sysWxReqPost, sysLocalSet, formatTime, getlevel} from "../../utils/libs";
 import { sysTimeStamp } from '../../utils/util';
 import { Toast } from 'tdesign-miniprogram';
-import { getlevel, formatTime, init81False, sameNumCellIndexs, connectCellIndexs, leftUndoCell, checkCells, sleepAt } from "./games_func";
+import { init81False, sameNumCellIndexs, connectCellIndexs, leftUndoCell, checkCells, sleepAt } from "./games_func";
+import { Step } from "../../utils/types";
 
 let timerInterval: number = 0;
-let steps: object[] = [];
+let steps: Step[] = [];
 Page({
 
   /**
@@ -13,7 +14,7 @@ Page({
    */
   data: {
     // 最大错误数
-    maxErrCt: 5,
+    maxErrCt: 3,
     level: 0,
     level_str: '入门',
     nine: [0, 1, 2, 3, 4, 5, 6, 7, 8], 
@@ -55,6 +56,10 @@ Page({
     checkCells:[false],
     // 是否正确
     isCollects:[false],
+    //
+    tipItems: Array(81),
+    isDone: false,
+    isShowGoback: false,
   },
 
 
@@ -66,13 +71,13 @@ Page({
       level: options.level,
       level_str : getlevel(Number(options.level)),
     });
-    console.log('game level link get: ', this.data.level_str);
+    // console.log('game level link get: ', this.data.level_str);
 
     // 获取问题
     // 发送 res.code 到后台换取 openId, sessionKey, unionId
     sysWxReqPost('/v1/sudoku/question/get', {'level': this.data.level})
     .then((data: any) => {
-      console.log('reponse data: ', data);
+      // console.log('reponse data: ', data);
       if(data?.code == 0){
         let now = sysTimeStamp();
         let ques   = data.data.question.split(',').map(Number);
@@ -91,10 +96,8 @@ Page({
           leftCellNum: leftUndoCell(doAnswer),
           checkCells: checks,
           isCollects: isCollects,
+          tipItems: this.initTipItem(),
         });
-        // 保存本地数据
-        sysLocalSet('curr_question', data.data);
-        sysLocalSet('curr_question_do_begin_at', now);
         this.startTimer();
       }
     })
@@ -122,6 +125,7 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide() {
+    console.log('go on hide...');
 
   },
 
@@ -129,14 +133,20 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload() {
-
+    console.log('go on unload...');
+    if(this.data.isDone === false){
+      this.stopTimer();
+      this.saveQues();
+    }else{
+      sysLocalSet('curr_ques_status', '');
+    }
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
-    clearInterval(timerInterval);
+    
 
   },
 
@@ -215,10 +225,6 @@ Page({
       return;
     }
 
-    console.log('do unfill idx: ', idx);
-    console.log('do unfill index: ', index);
-    console.log('do unfill ques : ', this.data.ques);
-
     // 预填
     if(this.data.ques[index] > 0){
       Toast({
@@ -242,10 +248,15 @@ Page({
     doArr[index] = idx+1;
 
     // 添加步骤队列
-    steps.push({"index":index, "val":idx+1, "type": this.data.isPencil ? 1 : 2});
-
+    let step: Step = {
+      index:index,
+      val: doArr[index],
+      optType: this.data.isPencil ? 1 : 2
+    };
+    steps.push(step);
+    // console.log("do steps do: ", steps);
     // 判断是否正确
-    let isCollect: boolean = this.data.answer[index] == (idx+1)
+    let isCollect: boolean = this.data.answer[index] == (idx+1);
     let errCt: number = this.data.errCt;
     if(isCollect == false){
         errCt += 1;
@@ -283,8 +294,6 @@ Page({
       }
     }
     
-    console.log('do unfill answer: ', doArr);
-    console.log('do origin answer: ', this.data.answer);
 
     // 重刷页面所有数据
     let checks: boolean[] = init81False();
@@ -320,5 +329,254 @@ Page({
     });
     console.log('is pencil : ', this.data.isPencil);
   },
+  // 回退
+  withdraw(){
+    console.log('do step withdraw: ', steps);
+    if(steps.length <= 0){
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '已没有回退步骤',
+      });
+      return;
+    }
+    let doAnswer = this.data.doAnswer
+    let pop = steps.pop();
+    doAnswer[Number(pop?.index)] = 0;
+    
+    let last:Step = {index:0, val:0, optType:2};
+    if(steps.length > 0){
+      last = steps[steps.length - 1];
+    }else{
+      last.index = Number(pop?.index);
+    }    
+    console.log('do step last: ', last);
+
+    let index: number = Number(last?.index);
+    let idx: number = Number(last?.val) - 1;
+    let sels: boolean[] = init81False();
+    sels[index] = true;
+    
+    doAnswer[index] = Number(last?.val);
+    let sames = sameNumCellIndexs(doAnswer, doAnswer[index]);
+    let conns = connectCellIndexs(index);
+    // 重新计算left cell
+    let left = leftUndoCell(doAnswer);
+
+    // 判断是否正确
+    let isCollect: boolean = this.data.answer[index] == doAnswer[index];
+    let isCollects = this.data.isCollects;
+    isCollects[index] = isCollect;
+
+    this.setData({
+      selectCell: sels,
+      sameNumCell: sames,
+      connectCell: conns,
+      currCellIndex: index,
+      doAnswer: doAnswer,
+      leftCellNum:   left,
+      currTipIndex:  idx,
+      isCollects: isCollects,
+    });
+  },
+
+  doTip(){
+    let index: number = this.data.currCellIndex;
+    if(isNaN(index)){
+      return;
+    }
+    let ct: number = this.data.adCt;
+    if(ct <= 0){
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '提示已用完',
+      });
+      return;
+    }
+
+    if(this.data.ques[index] > 0){
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '已有预填数字',
+      });
+      return;
+    }
+
+    
+    let doArr = this.data.doAnswer;
+
+    if(doArr[index] > 0){
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '已填数字',
+      });
+      return;
+    }
+
+    ct = ct-1;
+    let isCollects = this.data.isCollects;
+    doArr[index] = this.data.answer[index];
+    isCollects[index] = true;
+
+    // 添加步骤队列
+    let step: Step = {
+      index:index,
+      val: doArr[index],
+      optType: 2
+    };
+    steps.push(step);
+    console.log('do step dotip: ', steps);
+    let idx: number = 0;
+    let sels: boolean[] = init81False();
+    sels[index] = true;
+    let sames = sameNumCellIndexs(doArr, doArr[index]);
+    let conns = connectCellIndexs(index);
+    // 重新计算left cell
+    let left = leftUndoCell(doArr);
+    this.setData({
+      selectCell: sels,
+      sameNumCell: sames,
+      connectCell: conns,
+      currCellIndex: index,
+      doAnswer: doArr,
+      leftCellNum:   left,
+      currTipIndex:  idx,
+      adCt: ct,
+      isCollects: isCollects,
+    });
+  },
+
+  clean(){
+    let index: number = this.data.currCellIndex;
+    let ques = this.data.ques;
+
+    if(ques[index] > 0){
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '已有预填数字',
+      });
+      return;
+    }
+    
+    let doArr = this.data.doAnswer;
+    if(doArr[index] <= 0){
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '还没填写数字',
+      });
+      return;
+    }
+    doArr[index] = 0;
+    let isCollects = this.data.isCollects;
+    // isCollects[index] = true;
+
+    // 添加步骤队列
+    let step: Step = {
+      index:index,
+      val: 0,
+      optType: 2
+    };
+    steps.push(step);
+    // console.log('do step clean: ', steps);
+    let idx: number = 0;
+    let sels: boolean[] = init81False();
+    sels[index] = true;
+    let sames = sameNumCellIndexs(doArr, doArr[index]);
+    let conns = connectCellIndexs(index);
+    // 重新计算left cell
+    let left = leftUndoCell(doArr);
+    
+    this.setData({
+      selectCell: sels,
+      sameNumCell: sames,
+      connectCell: conns,
+      currCellIndex: index,
+      doAnswer: doArr,
+      leftCellNum:   left,
+      currTipIndex:  idx,
+      isCollects: isCollects,
+    });
+  },
+
+  doPencil(e: any){
+    let idx: number = Number(e.currentTarget.dataset.idxfill);
+    let index: number = this.data.currCellIndex;
+    let items = this.data.tipItems;
+
+    if(items[index][idx] > 0){
+      items[index][idx] = 0;
+    }else{
+      this.data.tipItems[index][idx] = idx+1;
+    }
+    this.setData({
+      tipItems: items,
+      currTipIndex:idx,
+    });
+  },
+
+  initTipItem():number[][]{
+    let rst: number[][] = new Array(81);
+    for(let i=0; i<81; i++){
+      rst[i] = new Array(9);
+      for(let j=0; j<9; j++){
+        rst[i][j] = 0;
+      }
+    }
+    // console.log('item tip init: ', rst);
+    return rst;
+  }, 
+
+  showGobackPop(){
+    this.setData({
+      isShowGoback: true
+    });
+  },
+  onVisibleChange(e:any) {
+    this.setData({
+      isShowGoback: e.detail.visible,
+    });
+  },
+  onClose() {
+    this.setData({
+      isShowGoback: false,
+    });
+  },
+
+  gotoindex(){
+    console.log('go to index.....');
+
+    if(this.data.isDone === false){
+      this.stopTimer();
+      this.saveQues();
+    }else{
+      sysLocalSet('curr_ques_status', '');
+    }
+
+    wx.redirectTo({
+      url: '../index/index',
+    });
+  },
+
+  saveQues(){
+    sysLocalSet('curr_ques_status',{
+      play_id: this.data.playId,
+      ques: this.data.ques,
+      answer: this.data.answer,
+      do_answer: this.data.doAnswer,
+      errCt: this.data.errCt,
+      level: this.data.level,
+      is_collects: this.data.isCollects,
+      curr_cell_index: this.data.currCellIndex,
+      left_cell_num: this.data.leftCellNum,
+      use_seconds: this.data.useSeconds,
+      ad_ct: this.data.adCt,
+    });
+  },
+
 
 })

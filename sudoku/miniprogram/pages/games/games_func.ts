@@ -7,38 +7,6 @@ export function init81False(): boolean[]{
     return tmp;
 }
 
-export function getlevel(level: number) :string{
-    let rst: string = '入门';
-    switch(level){
-      case 1:
-        rst = '入门';
-        break;
-      case 2:
-        rst = '简单';
-        break;
-      case 3:
-        rst = '中级';
-        break;
-      case 4:
-        rst = '困难';
-        break;
-      case 5:
-        rst = '专家';
-        break;
-    }
-    return rst;
-}
-
-export function formatTime(useSeconds: number) {
-    const h = padTime(Math.floor(useSeconds / 3600));
-    const m = padTime(Math.floor((useSeconds % 3600) / 60));
-    const s = padTime(useSeconds % 60);
-    return `${h}:${m}:${s}`;
-}
-
-function padTime(time: number) {
-    return time < 10 ? `0${time}` : `${time}`;
-}
 
 // 获取并设置关联的cell索引为true
 export function connectCellIndexs(index: number): boolean[]{

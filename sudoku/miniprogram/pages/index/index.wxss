@@ -26,3 +26,8 @@ page {
   align-items: center;
   justify-content: space-evenly;
 }
+
+.btn-tip{
+  font-size: 24rpx;
+  line-height: 30rpx;
+}

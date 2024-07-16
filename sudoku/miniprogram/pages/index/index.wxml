@@ -20,13 +20,57 @@
         <view class="view">
           <t-button
             block
-            disabled
             theme="light"
-            variant="text"
-          >开始游戏</t-button>
+            bind:tap="gotoHistory"
+          >查看我的挑战历史</t-button>
+        </view>
+      </t-col>
+
+      <t-col span="24">
+        <view class="view">
+          <t-button
+            block
+            theme="light"
+            bind:tap="showPop"
+          >开始新游戏</t-button>
+        </view>
+      </t-col>
+
+       <t-col span="24">
+        <block wx:if="{{isOld}}">
+          <view class="view">
+            <t-button
+              block
+              theme="light"
+              bind:tap="continueGame" >继续游戏</t-button>
+          </view>
+          <view  class="view block">
+            <text class="text btn-tip" decode="true">当前游戏：等级-{{level_str}} | 用时-{{formattedTime}}</text>
+          </view>
+        </block>
+        <block wx:else>
+          <view class="view">
+            <t-button
+              block
+              theme="light"
+              disabled 
+            >继续游戏</t-button>
+          </view>
+        </block>
+      </t-col>
+      
+    </t-row>
+     
+  </view>
+  <t-popup visible="{{isPop}}" bind:visible-change="onVisibleChange" placement="bottom">
+    <view>
+    <t-row>
+    <t-col span="24">
+        <view class="view link text">
+          <text>请选中游戏难度：</text>
         </view>
         <view class="view link">
-          <t-link size="large" theme="success" content="入门" hover bindtap="linkToGame" data-level="1" />
+          <t-link size="large" content="入门" hover bindtap="linkToGame" data-level="1" />
         </view>
         <view class="view link">
           <t-link size="large" theme="success" content="简单" hover bindtap="linkToGame" data-level="2" />
@@ -43,9 +87,8 @@
         <view class="view link">
           <t-link size="large" theme="danger" content="专家" hover bindtap="linkToGame" data-level="5"/>
         </view>
-       
-      </t-col>
-
+    </t-col>
     </t-row>
-  </view>
+    </view>
+  </t-popup>
 </scroll-view>
