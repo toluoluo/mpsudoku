@@ -1,0 +1,89 @@
+<!--pages/games/games.wxml-->
+<view>
+  <t-navbar
+    t-class-placeholder="t-navbar-placeholder"
+    t-class-content="t-navbar-content"
+    title="数独天天玩"
+    left-arrow
+    >
+    <text class="left-text" slot="left" bind:tap="gotoindex">返回</text>
+  </t-navbar>
+</view>
+
+<view class="games-container">
+  <t-divider content="数独简介" align="left" />
+  <view class="view text">
+  标准数独：数独(Sudoku)是源自18世纪瑞士的一种数学游戏，是一种运用纸、笔进行演算的逻辑游戏。
+  </view>
+  <view class="view text">
+  玩家需要根据9x9盘面上的已知数字，推理出所有剩余空格的数字，并满足每一行、每一列、每-个粗线宫(3*3)内的数字均含1-9，不重复。
+  </view>
+  <view class="view text">
+  数独盘面是个九宫，每一宫又分为九个小格。
+  </view>
+  <view class="view text">
+  在这八十一格中给出一定的已知数字和解题条件，利用逻辑和推理，在其他的空格上填入1-9的数字。
+  </view>
+  <view class="view text">
+  使1-9每个数字在每一行、每一列和每一宫中都只出现一次，所以又称“九宫格”。
+  </view>
+
+  <t-divider content="解题手法-概述" align="left" />
+  <view class="view text">
+  依解题填制的过程可区分为直观法与候选数法。
+</view>
+  <view class="view text">
+  直观法就是不做任何记号，直接从数独的盘势观察线索，推论答案的方法。
+</view>
+  <view class="view text">
+  候选数法就是删减等位群格位已出现的数字，将剩余可填数字填入空格做为解题线索的参考，可填数字称为候选数(或称备选数)。
+</view>
+  <view class="view text">
+  直观法和候选数法只是填制时候是否有注记的区别，依照个人习惯而定，并非鉴定题目难度或技巧难度的标准，无论是难题或是简单题都可上述方法填制，一般程序解题以候选数法较多。
+  </view>
+
+  <t-divider content="基础手法" align="left" />
+  <view class="view text">
+  排除法(摒除法):用数字去找单元内唯一可填空格，称为摒除法，数字可填唯一空格称为排除法。
+  </view>
+  <view class="view text">
+  根据不同的作用范围，摒余解可分为下述三种:数字可填唯一空格在「宫」单元称为宫排除，也称宫摒除法。  
+  </view>
+  <view class="view text">
+  数字可填唯一空格在「行」单元称为行排除法，也称行摒除法。
+  </view>
+  <view class="view text">
+  数字可填唯一空格在「列」单元称为列排除法，也称列摒除法。
+  </view>
+  <view class="view text">
+  
+  唯一余数法:用格位去找唯一可填数字，称为余数法，格位唯一可填数字称为唯余解。
+  </view>
+  <view class="view text">
+  余数法是删减等位群格位已出现的数字的方法，每一格位的等位群格位有 20个。
+  </view>
+
+  <t-divider content="进阶手法" align="left" />
+  <view class="view text">
+  区块摒除法:区块摒除法包括宫区块摒除法与行列区块摒除法。
+  </view>
+  <view class="view text">
+  利用区块摒除可以替代一些基础解法的观察，或辅助基础解法寻找焦点。在较有难度的题里，区块可以隐藏任何其他结构，简单的可以把基础解法隐藏起来，难的可以隐藏数对等等其他进阶技巧。
+  </view>
+  <view class="view text">
+  
+  数对法:当一个单元(行、列、宫)的某两个数字仅可能在某两格时，我们称这两个格为这两个数的数对。
+  </view>
+  <view class="view text">
+  数对出现在宫称为宫数对;数对出现在行列成为行列数对。
+  </view>
+  <view class="view text">
+  用候选数法的观点去看，数对有两种，一种是在同单元内其中两格有相同的双候选数，一看就明白，因此称为显性数对。
+  </view>
+  <view class="view text" style="margin-bottom:30rpx;">
+  另一种是，同单元内有两个候选数占用了相同的两格，该两格因为还有其它候选数很难辨认，因此称为隐性数对。
+  </view>
+
+
+</view>
+

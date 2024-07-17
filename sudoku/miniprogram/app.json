@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/games/games",
     "pages/users/users",
-    "pages/succ/succ"
+    "pages/succ/succ",
+    "pages/skill/skill"
   ],
   "window": {
     "navigationStyle": "custom",

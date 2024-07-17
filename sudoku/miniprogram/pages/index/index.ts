@@ -110,5 +110,12 @@ Page({
     });
   },
 
+  gotoskill(){
+    console.log('go to skill')
+    wx.redirectTo({
+      url: '../skill/skill',
+    });
+  },
+
 
 })

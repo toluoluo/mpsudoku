@@ -252,6 +252,7 @@ Page({
       sameNumCell: sames,
       connectCell: conns,
       currCellIndex: index,
+      currTipIndex:-1,
     });
 
   },
@@ -268,6 +269,7 @@ Page({
       sameNumCell: sames,
       connectCell: conns,
       currCellIndex: index,
+      currTipIndex:-1,
     });
   },
 
@@ -614,6 +616,7 @@ Page({
     });
   },
 
+
   saveQues(){
     sysLocalSet('curr_ques_status',{
       play_id: this.data.playId,
@@ -674,7 +677,5 @@ Page({
       isPop: e.detail.visible,
     });
   },
-
-
 
 })

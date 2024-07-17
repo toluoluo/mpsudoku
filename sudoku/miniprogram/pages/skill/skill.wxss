@@ -1,0 +1,19 @@
+/* pages/skill/skill.wxss */.scrollarea {
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.games-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0rpx;
+  box-sizing: border-box;
+} 
+.block {
+  color: var(--td-text-color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

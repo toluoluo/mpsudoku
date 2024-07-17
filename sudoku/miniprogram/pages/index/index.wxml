@@ -31,6 +31,15 @@
           <t-button
             block
             theme="light"
+            bind:tap="gotoskill"
+          >解题技巧</t-button>
+        </view>
+      </t-col>
+      <t-col span="24">
+        <view class="view">
+          <t-button
+            block
+            theme="light"
             bind:tap="showPop"
           >开始新游戏</t-button>
         </view>

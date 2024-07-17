@@ -6,7 +6,7 @@
     title="数独天天玩"
     left-arrow
     >
-    <text class="left-text" slot="left" bind:tap="gotoindex">返回</text>
+    <text class="left-text" slot="left" bind:tap="gotoindex">返回</text>    
   </t-navbar>
 </view>
 
