@@ -178,3 +178,58 @@ export async function sleepAt() {
 function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+export function isVerifySudoku(doAnswer: number[]) :boolean{
+    let board: number[][] = [];
+    for(let i=0; i<doAnswer.length; i+=9){
+        let chunk = doAnswer.slice(i, i+9);
+        board.push(chunk);
+    }
+
+    for (let i = 0; i < 9; i++) {
+        const rowSet = new Set<number>();
+        for (let j = 0; j < 9; j++) {
+            const num = board[i][j];
+            if (num !== 0) {
+                if (rowSet.has(num)) {
+                    return false; // 出现重复数字，不合法
+                }
+                rowSet.add(num);
+            }
+        }
+    }
+    
+    // 检查列
+    for (let j = 0; j < 9; j++) {
+        const colSet = new Set<number>();
+        for (let i = 0; i < 9; i++) {
+            const num = board[i][j];
+            if (num !== 0) {
+                if (colSet.has(num)) {
+                    return false; // 出现重复数字，不合法
+                }
+                colSet.add(num);
+            }
+        }
+    }
+    
+    // 检查 3x3 的子数独
+    for (let block = 0; block < 9; block++) {
+        const blockSet = new Set<number>();
+        const offsetX = 3 * Math.floor(block / 3);
+        const offsetY = 3 * (block % 3);
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const num = board[offsetX + i][offsetY + j];
+                if (num !== 0) {
+                    if (blockSet.has(num)) {
+                        return false; // 出现重复数字，不合法
+                    }
+                    blockSet.add(num);
+                }
+            }
+        }
+    }
+    
+    return true; // 棋盘符合规则
+}

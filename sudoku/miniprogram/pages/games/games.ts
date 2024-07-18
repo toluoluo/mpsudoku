@@ -2,7 +2,7 @@
 import {sysWxReqPost, sysLocalSet, formatTime, getlevel, sysLocalGet} from "../../utils/libs";
 import { sysTimeStamp } from '../../utils/util';
 import { Toast } from 'tdesign-miniprogram';
-import { init81False, sameNumCellIndexs, connectCellIndexs, leftUndoCell, checkCells, sleepAt } from "./games_func";
+import { init81False, sameNumCellIndexs, connectCellIndexs, leftUndoCell, checkCells, sleepAt, isVerifySudoku } from "./games_func";
 import { Step } from "../../utils/types";
 
 let timerInterval: number = 0;
@@ -242,6 +242,20 @@ Page({
 
   // 处理未填写的
   getUnfill(e: any){
+
+    if(this.data.errCt >= this.data.maxErrCt){
+      this.stopTimer();
+      // Toast({
+      //   context: this,
+      //   selector: '#t-toast',
+      //   message: '错误已超过'+this.data.maxErrCt+'次，请重新开始游戏',
+      // });
+      this.setData({
+        isShowMaxErr:true,
+      })
+      return;
+    }
+
     let index: number = Number(e.currentTarget.dataset.index);
     let sels: boolean[] = init81False();
     sels[index] = true;
@@ -318,7 +332,8 @@ Page({
     steps.push(step);
     // console.log("do steps do: ", steps);
     // 判断是否正确
-    let isCollect: boolean = this.data.answer[index] == (idx+1);
+    let isCollect: boolean = isVerifySudoku(this.data.doAnswer);
+    // let isCollect: boolean = this.data.answer[index] == (idx+1);
     let errCt: number = this.data.errCt;
     if(isCollect == false){
         errCt += 1;
@@ -435,7 +450,8 @@ Page({
     let left = leftUndoCell(doAnswer);
 
     // 判断是否正确
-    let isCollect: boolean = this.data.answer[index] == doAnswer[index];
+    // let isCollect: boolean = this.data.answer[index] == doAnswer[index];
+    let isCollect: boolean = isVerifySudoku(this.data.doAnswer);
     let isCollects = this.data.isCollects;
     isCollects[index] = isCollect;
 
