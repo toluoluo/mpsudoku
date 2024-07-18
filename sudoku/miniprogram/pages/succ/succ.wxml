@@ -4,7 +4,7 @@
     t-class-placeholder="t-navbar-placeholder"
     t-class-content="t-navbar-content"
     class="block"
-    title="数独天天玩"
+    title="数数独读"
   />
 </view>
 
@@ -36,6 +36,11 @@
             bind:tap="showPop"
           >开始新游戏</t-button>
         </view>
+      </t-col>
+      <t-col span="24">
+      <view>
+        <ad unit-id="adunit-40da86a17195f8fb" ad-type="video" ad-theme="white" bindload="adLoad" binderror="adError" bindclose="adClose"></ad>
+      </view>
       </t-col>
     </t-row>
   </view>

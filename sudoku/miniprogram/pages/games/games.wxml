@@ -3,7 +3,7 @@
   <t-navbar
     t-class-placeholder="t-navbar-placeholder"
     t-class-content="t-navbar-content"
-    title="数独天天玩"
+    title="数数独读"
     left-arrow
     >
     <text class="left-text" slot="left" bind:tap="gotoindex">返回</text>    
@@ -43,8 +43,8 @@
     <t-grid>
       <t-grid-item text="撤回" icon="rollback" bind:tap="{{isDone ? '' : 'withdraw'}}"/>
       <t-grid-item text="清除" icon="clear-formatting" bind:tap="{{isDone ? '' : 'clean'}}" />
-      <t-grid-item text="铅笔" icon="pen-ball" bind:tap="{{isDone ? '' : 'isPencilCheck' }}" badge-props="{{ {count: isPencil ? 'on' : 'off' } }}"/>
-      <t-grid-item text="提示" icon="gesture-press" bind:tap="{{isDone ? '' : 'doTip' }}" badge-props="{{ {count: adCt} }}"/>
+      <t-grid-item text="铅笔" icon="pen-ball" bind:tap="{{isDone ? '' : 'isPencilCheck' }}" badge-props="{{ {count: isPencil ? '开' : '关' } }}"/>
+      <t-grid-item text="提示" icon="gesture-press" bind:tap="{{isDone ? '' : 'doTip' }}" badge-props="{{ {count: adCt > 0 ? adCt : '广告'} }}"/>
     </t-grid>
   </view>
 
@@ -57,7 +57,7 @@
   </view>
 
     <t-popup visible="{{isShowMaxErr}}" bind:visible-change="onVisibleChange" placement="center">
-    <view style="height: 300rpx;">
+    <view style="height: 350rpx;">
       <t-row>
         <t-col span="24">
         <view class="block text pop-margin">错误已超过{{maxErrCt}}次</view> 
@@ -71,7 +71,7 @@
               variant="outline"
               bind:tap="gotoindex"
               size="small"
-            >返回主页</t-button>
+            >主页主页</t-button>
           </view>
         </t-col>
 
@@ -83,9 +83,22 @@
               variant="outline"
               bind:tap="showPop"
               size="small"
-            >开始新游戏</t-button>
+            >新游戏</t-button>
           </view>
         </t-col>
+
+        <t-col span="24">
+          <view class="view">
+            <t-button
+              block
+              theme="danger"
+              variant="outline"
+              bind:tap="openAd"
+              size="small"
+            >广告复活</t-button>
+          </view>
+        </t-col>
+        
       </t-row>
     </view>
     <view class="go-back-block">

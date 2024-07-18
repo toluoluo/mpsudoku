@@ -114,4 +114,14 @@ Page({
     });
   },
 
+  adLoad() {
+    console.log('视频广告 广告加载成功')
+  },
+  adError(err:any) {
+    console.error('视频广告 广告加载失败', err)
+  },
+  adClose() {
+    console.log('视频广告 广告关闭')
+  },
+
 })

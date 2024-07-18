@@ -7,6 +7,9 @@ import { Step } from "../../utils/types";
 
 let timerInterval: number = 0;
 let steps: Step[] = [];
+
+let videoAd: any = null;
+let whichWard = 0;
 Page({
 
   /**
@@ -70,6 +73,33 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options: any) {
+
+    if (wx.createRewardedVideoAd) {
+      videoAd = wx.createRewardedVideoAd({
+        adUnitId: 'adunit-24bf8f605bb54fef'
+      })
+      videoAd.onLoad(() => {});
+      videoAd.onError((err: any) => {
+        // console.error('激励视频广告加载失败', err);
+      })
+      videoAd.onClose((res: any) => {
+        if(res && res.isEnded || res === undefined){
+          switch(whichWard){
+            case 1:
+              // 错误次数归0
+              this.setData({errCt: 0,});
+              this.startTimer();
+              break;
+            case 2:
+              // 提示，奖励1次
+              this.setData({adCt: 1,});
+              break;
+          }
+        }else{
+          //播放中途退出
+        }
+      });
+    }
 
     let level = options.level;
 
@@ -145,8 +175,7 @@ Page({
     })
     .catch((err: any) => {
       console.log('request api fail: ', err);
-    })
-
+    });
   },
 
   /**
@@ -245,11 +274,6 @@ Page({
 
     if(this.data.errCt >= this.data.maxErrCt){
       this.stopTimer();
-      // Toast({
-      //   context: this,
-      //   selector: '#t-toast',
-      //   message: '错误已超过'+this.data.maxErrCt+'次，请重新开始游戏',
-      // });
       this.setData({
         isShowMaxErr:true,
       })
@@ -340,14 +364,9 @@ Page({
     }
     if(errCt > this.data.maxErrCt){
       this.stopTimer();
-      // Toast({
-      //   context: this,
-      //   selector: '#t-toast',
-      //   message: '错误已超过'+this.data.maxErrCt+'次，请重新开始游戏',
-      // });
       this.setData({
         isShowMaxErr:true,
-      })
+      });
       return;
     }
     // 判断行列方格是否正确
@@ -474,11 +493,14 @@ Page({
     }
     let ct: number = this.data.adCt;
     if(ct <= 0){
-      Toast({
-        context: this,
-        selector: '#t-toast',
-        message: '提示已用完',
-      });
+      // 打开激励广告
+      whichWard = 2;
+      this.openVideoAd();
+      // Toast({
+      //   context: this,
+      //   selector: '#t-toast',
+      //   message: '提示已用完',
+      // });
       return;
     }
 
@@ -692,6 +714,27 @@ Page({
     this.setData({
       isPop: e.detail.visible,
     });
+  },
+
+  openVideoAd(){
+    
+    if (videoAd) {
+      videoAd.show().catch(() => {
+        // 失败重试
+        videoAd.load()
+          .then(() => videoAd.show())
+          .catch((err: any) => {
+            // console.error('open ad fail', err)
+          })
+      })
+    }
+  },
+
+  openAd(){
+
+    whichWard = 1;
+    this.onClose();
+    this.openVideoAd();
   },
 
 })

@@ -151,7 +151,7 @@
 .go-back-block {
   position: relative;
   width: 240px;
-  height: 80px;
+  height: 100px;
   background: var(--td-bg-color-container);
   border-radius: 16rpx;
 }
