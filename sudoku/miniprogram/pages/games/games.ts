@@ -28,7 +28,7 @@ Page({
     playId: 0,
     useSeconds:0,
     formattedTime: '00:00:00',
-    adCt : 3 ,
+    adCt : 1 ,
 
     active: false,
     //选中的cell

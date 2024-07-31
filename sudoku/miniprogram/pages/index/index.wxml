@@ -4,7 +4,7 @@
     t-class-placeholder="t-navbar-placeholder"
     t-class-content="t-navbar-content"
     class="block"
-    title="数数独读"
+    title="有趣数独"
   />
 </view>
 

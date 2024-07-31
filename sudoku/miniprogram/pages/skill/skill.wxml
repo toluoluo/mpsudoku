@@ -3,7 +3,7 @@
   <t-navbar
     t-class-placeholder="t-navbar-placeholder"
     t-class-content="t-navbar-content"
-    title="数数独读"
+    title="有趣数独"
     left-arrow
     >
     <text class="left-text" slot="left" bind:tap="gotoindex">返回</text>
