@@ -15,8 +15,7 @@ App<IAppOption>({
       // 登录
       wx.login({
         success: res => {
-          console.log('running here');
-          console.log(res.code)
+          // console.log(res.code);
           // 发送 res.code 到后台换取 openId, sessionKey, unionId
           sysWxReqPost('/v1/wxlogin/auth', {'js_code': res.code})
           .then((data: any) => {

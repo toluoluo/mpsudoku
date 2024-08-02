@@ -1,7 +1,7 @@
 // index.ts
 // 获取应用实例
 
-import {sysLocalGet, formatTime, getlevel} from "../../utils/libs";
+import {sysLocalGet, formatTime, getlevel, getPageUrl} from "../../utils/libs";
 
 // const app = getApp<IAppOption>()
 // const defaultAvatarUrl: string= 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
@@ -114,6 +114,17 @@ Page({
     console.log('go to skill')
     wx.redirectTo({
       url: '../skill/skill',
+    });
+  },
+
+  gotoPage(e: any){
+    let t: string = e.detail.value;
+    let url = getPageUrl(t);    
+    if(url == ''){
+      return;
+    }
+    wx.redirectTo({
+      url: url,
     });
   },
 

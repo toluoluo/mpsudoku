@@ -1,6 +1,4 @@
-import { getPageUrl } from "../../utils/libs";
-
-// pages/skill/skill.ts
+// pages/detail/detail.ts
 Page({
 
   /**
@@ -64,23 +62,5 @@ Page({
    */
   onShareAppMessage() {
 
-  },
-
-  gotoindex(){
-    wx.redirectTo({
-      url: '../index/index',
-    });
-  },
-
-  
-  gotoPage(e: any){
-    let t: string = e.detail.value;
-    let url = getPageUrl(t);    
-    if(url == ''){
-      return;
-    }
-    wx.redirectTo({
-      url: url,
-    });
-  },
+  }
 })

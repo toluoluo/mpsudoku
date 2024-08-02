@@ -13,7 +13,7 @@ export const sysLocalGet = function (key: string) {
 const buildReqParam = function(arr:  Record<string, any>){
 
   const token = sysLocalGet("login_user_token");
-  console.log('login user token: ', token);
+  // console.log('login user token: ', token);
   if(token){
     arr.token = token;
   }
@@ -87,4 +87,23 @@ export function getlevel(level: number) :string{
       break;
   }
   return rst;
+}
+
+export function getPageUrl(t: string) :string{
+  let url = '';
+  switch(t){
+    case 'home':
+      url = '../index/index';
+      break;
+    case 'rankings':
+      url = '../rankings/rankings';
+      break;
+    case 'users':
+      url = '../users/users';
+      break;
+    case 'my':
+      url = '../my/my';
+      break;
+  }
+  return url;
 }

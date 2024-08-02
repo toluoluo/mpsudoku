@@ -10,6 +10,7 @@ let steps: Step[] = [];
 
 let videoAd: any = null;
 let whichWard = 0;
+let from = 0;
 Page({
 
   /**
@@ -66,6 +67,10 @@ Page({
     isShowMaxErr: false,
     // 展示跳转性游戏选择弹出框
     isPop: false,
+    // 使用提示次数
+    totalTipCt: 0,
+    // 错误次数
+    totalErrCt: 0,
   },
 
 
@@ -74,69 +79,19 @@ Page({
    */
   onLoad(options: any) {
 
-    if (wx.createRewardedVideoAd) {
-      videoAd = wx.createRewardedVideoAd({
-        adUnitId: 'adunit-24bf8f605bb54fef'
-      })
-      videoAd.onLoad(() => {});
-      videoAd.onError((err: any) => {
-        // console.error('激励视频广告加载失败', err);
-      })
-      videoAd.onClose((res: any) => {
-        if(res && res.isEnded || res === undefined){
-          switch(whichWard){
-            case 1:
-              // 错误次数归0
-              this.setData({errCt: 0,});
-              this.startTimer();
-              break;
-            case 2:
-              // 提示，奖励1次
-              this.setData({adCt: 1,});
-              break;
-          }
-        }else{
-          //播放中途退出
-        }
-      });
-    }
+    // 加载广告
+    this.onloadAd();
 
     let level = options.level;
+    from  = options?.from ? options.from : 0;
 
     if(level == 10){
-      let old = sysLocalGet('curr_ques_status');
-      if(old !== '' && old !== false){
-        let index = Number(old.curr_cell_index);
-        let sels: boolean[] = init81False();
-        sels[index] = true;
-        let sames = sameNumCellIndexs(this.data.doAnswer, this.data.doAnswer[index]);
-        let conns = connectCellIndexs(index);
-        this.setData({
-          level:old.level,
-          level_str: getlevel(Number(old.level)),
-          formattedTime: formatTime(old.use_seconds),
-          useSeconds: Number(old.use_seconds),
-          playId: Number(old.play_id),
-          ques: old.ques,
-          answer: old.answer,
-          doAnswer: old.do_answer,
-          errCt: Number(old.errCt),
-          isCollects: old.is_collects,
-          currCellIndex: index,
-          adCt: Number(old.ad_ct),
-          leftCellNum: old.left_cell_num,
-          sameNumCell: sames,
-          connectCell: conns,
-          selectCell: sels,
-          tipItems: old.tip_items,
-          currTipIndex: Number(old.curr_cell_index),
-          isPencil: Boolean(old.is_pencil),
-        });
-        this.startTimer();
+      // 初始化本地数据
+      let flag = this.iniLocalQuestionData()
+      if(flag){
         return;
-      }else{
-        level = 1;
       }
+      level = 1;
     }
 
     this.setData({
@@ -145,37 +100,15 @@ Page({
     });
     // console.log('game level link get: ', this.data.level_str);
 
-    // 获取问题
-    // 发送 res.code 到后台换取 openId, sessionKey, unionId
-    sysWxReqPost('/v1/sudoku/question/get', {'level': this.data.level})
-    .then((data: any) => {
-      // console.log('reponse data: ', data);
-      if(data?.code == 0){
-        let now = sysTimeStamp();
-        let ques   = data.data.question.split(',').map(Number);
-        let answer = data.data.answer.split(',').map(Number);
-        let doAnswer   = data.data.question.split(',').map(Number);
-        // let left   = data.data.question.split(',').map(Number);
-        let checks: boolean[] = init81False();
-        let isCollects: boolean[] = init81False();
-        // 设置本地数据
-        this.setData({
-          ques: ques,
-          answer: answer,
-          doAnswer: doAnswer,
-          playId: data.data.play_id,
-          doBeginAt: now,
-          leftCellNum: leftUndoCell(doAnswer),
-          checkCells: checks,
-          isCollects: isCollects,
-          tipItems: this.initTipItem(),
-        });
-        this.startTimer();
-      }
-    })
-    .catch((err: any) => {
-      console.log('request api fail: ', err);
-    });
+    if(from == 0){
+      // 从首页进入
+      this.initQuestionFromApi();
+    }else{
+      // 从榜单进入
+      let pid = options.pid;
+      this.initQuestionFromRankings(pid);
+    }
+    
   },
 
   /**
@@ -218,9 +151,11 @@ Page({
       // 记录未完成的游戏
       sysWxReqPost('/v1/sudoku/question/done', {
         'play_id': this.data.playId,
-        'use_time': this.data.playId,
+        'use_time': this.data.useSeconds,
         'use_ad':0,
         'is_pass': this.data.isDone ? 1 : 2,
+        'err_ct' : this.data.totalErrCt,
+        'tip_ct' : this.data.totalTipCt,
       })
       .then((data:any) =>{})
       .catch((err: any) =>{});
@@ -260,7 +195,7 @@ Page({
         useSeconds: this.data.useSeconds + 1,
         formattedTime: formatTime(this.data.useSeconds + 1)
       });
-      console.log("use seconds: ", this.data.useSeconds);
+      // console.log("use seconds: ", this.data.useSeconds);
 
     }, 1000);
   },
@@ -360,7 +295,11 @@ Page({
     // let isCollect: boolean = this.data.answer[index] == (idx+1);
     let errCt: number = this.data.errCt;
     if(isCollect == false){
-        errCt += 1;
+       this.setData({
+        totalErrCt: this.data.totalErrCt + 1,
+       });
+
+       errCt += 1;
     }
     if(errCt > this.data.maxErrCt){
       this.stopTimer();
@@ -491,6 +430,10 @@ Page({
     if(isNaN(index)){
       return;
     }
+    this.setData({
+      totalTipCt: this.data.totalTipCt + 1,
+    });
+
     let ct: number = this.data.adCt;
     if(ct <= 0){
       // 打开激励广告
@@ -649,9 +592,17 @@ Page({
       sysLocalSet('curr_ques_status', '');
     }
 
-    wx.redirectTo({
-      url: '../index/index',
-    });
+    if(from == 0){
+      // 返回首页
+      wx.redirectTo({
+        url: '../index/index',
+      });
+    }else{
+      // 返回榜单
+      wx.redirectTo({
+        url: '../rankings/rankings?level='+this.data.level,
+      });
+    }
   },
 
 
@@ -671,6 +622,9 @@ Page({
       tip_items: this.data.tipItems,
       curr_tip_index: this.data.currTipIndex,
       is_pencil: this.data.isPencil,
+      totalTipCt: this.data.totalTipCt,
+      totalErrCt: this.data.totalErrCt,
+
     });
   },
 
@@ -731,10 +685,146 @@ Page({
   },
 
   openAd(){
-
     whichWard = 1;
     this.onClose();
     this.openVideoAd();
   },
+
+  onloadAd(){
+    // 加载广告
+    if (wx.createRewardedVideoAd) {
+      videoAd = wx.createRewardedVideoAd({
+        adUnitId: 'adunit-24bf8f605bb54fef'
+      })
+      videoAd.onLoad(() => {});
+      videoAd.onError((err: any) => {
+        // console.error('激励视频广告加载失败', err);
+      })
+      videoAd.onClose((res: any) => {
+        if(res && res.isEnded || res === undefined){
+          switch(whichWard){
+            case 1:
+              // 错误次数归0
+              this.setData({errCt: 0,});
+              this.startTimer();
+              break;
+            case 2:
+              // 提示，奖励1次
+              this.setData({adCt: 1,});
+              break;
+          }
+        }else{
+          //播放中途退出
+        }
+      });
+    }
+  },
+
+  // 初始化本地问题
+  iniLocalQuestionData() :boolean{
+    let old = sysLocalGet('curr_ques_status');
+      if(old !== '' && old !== false){
+        let index = Number(old.curr_cell_index);
+        let sels: boolean[] = init81False();
+        sels[index] = true;
+        let sames = sameNumCellIndexs(this.data.doAnswer, this.data.doAnswer[index]);
+        let conns = connectCellIndexs(index);
+        this.setData({
+          level:old.level,
+          level_str: getlevel(Number(old.level)),
+          formattedTime: formatTime(old.use_seconds),
+          useSeconds: Number(old.use_seconds),
+          playId: Number(old.play_id),
+          ques: old.ques,
+          answer: old.answer,
+          doAnswer: old.do_answer,
+          errCt: Number(old.errCt),
+          isCollects: old.is_collects,
+          currCellIndex: index,
+          adCt: Number(old.ad_ct),
+          leftCellNum: old.left_cell_num,
+          sameNumCell: sames,
+          connectCell: conns,
+          selectCell: sels,
+          tipItems: old.tip_items,
+          currTipIndex: Number(old.curr_cell_index),
+          isPencil: Boolean(old.is_pencil),
+          totalTipCt: Number(old.totalTipCt),
+          totalErrCt: Number(old.totalErrCt),
+        });
+        this.startTimer();
+        return true;
+      }
+      return false;
+  },
+
+  // 从接口初始化问题
+  initQuestionFromApi(){
+    // 获取问题
+    sysWxReqPost('/v1/sudoku/question/get', {'level': this.data.level})
+    .then((data: any) => {
+      // console.log('reponse data: ', data);
+      if(data?.code == 0){
+        let now = sysTimeStamp();
+        let ques   = data.data.question.split(',').map(Number);
+        let answer = data.data.answer.split(',').map(Number);
+        let doAnswer   = data.data.question.split(',').map(Number);
+
+        let checks: boolean[] = init81False();
+        let isCollects: boolean[] = init81False();
+        // 设置本地数据
+        this.setData({
+          ques: ques,
+          answer: answer,
+          doAnswer: doAnswer,
+          playId: data.data.play_id,
+          doBeginAt: now,
+          leftCellNum: leftUndoCell(doAnswer),
+          checkCells: checks,
+          isCollects: isCollects,
+          tipItems: this.initTipItem(),
+        });
+        this.startTimer();
+      }
+    })
+    .catch((err: any) => {
+      console.log('request api fail: ', err);
+    });
+  },
+
+  // 从榜单获取问题
+  initQuestionFromRankings(play_id: number){
+    // 获取问题
+    sysWxReqPost('/v1/sudoku/question/getfromrankings', {'play_id': play_id})
+    .then((data: any) => {
+      // console.log('reponse data: ', data);
+      if(data?.code == 0){
+        let now = sysTimeStamp();
+        let ques   = data.data.question.split(',').map(Number);
+        let answer = data.data.answer.split(',').map(Number);
+        let doAnswer   = data.data.question.split(',').map(Number);
+
+        let checks: boolean[] = init81False();
+        let isCollects: boolean[] = init81False();
+        // 设置本地数据
+        this.setData({
+          ques: ques,
+          answer: answer,
+          doAnswer: doAnswer,
+          playId: data.data.play_id,
+          doBeginAt: now,
+          leftCellNum: leftUndoCell(doAnswer),
+          checkCells: checks,
+          isCollects: isCollects,
+          tipItems: this.initTipItem(),
+        });
+        this.startTimer();
+      }
+    })
+    .catch((err: any) => {
+      console.log('request api fail: ', err);
+    });
+  },
+
 
 })

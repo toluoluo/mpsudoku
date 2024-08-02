@@ -1,0 +1,35 @@
+<!--pages/my/my.wxml-->
+
+<view class="block">
+  <t-navbar
+    t-class-placeholder="t-navbar-placeholder"
+    t-class-content="t-navbar-content"
+    class="block"
+    title="我的"
+  />
+</view>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">   
+    <t-row>
+      <t-col span="24">
+        <view class="view title">
+        数独榜单
+        </view>
+        <t-divider content="7天内解答数独耗时最少前30名" align="left" />
+      </t-col>
+       
+      <t-col span="24">
+      </t-col>
+    </t-row>
+  </view>  
+
+  <view>
+      <t-tab-bar t-class="t-tab-bar" value="active" bindchange="gotoPage" split="{{false}}">
+      <t-tab-bar-item value="home" > 首页 </t-tab-bar-item>
+      <t-tab-bar-item value="rankings" > 榜单 </t-tab-bar-item>
+      <t-tab-bar-item value="active" > 我的 </t-tab-bar-item>
+      </t-tab-bar>
+  </view>
+
+</scroll-view>

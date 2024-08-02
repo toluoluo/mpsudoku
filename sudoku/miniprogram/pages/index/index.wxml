@@ -100,4 +100,14 @@
     </t-row>
     </view>
   </t-popup>
+
+  <view>
+  <t-tab-bar t-class="t-tab-bar" value="active" bindchange="gotoPage" split="{{false}}">
+    <t-tab-bar-item value="active" > 首页 </t-tab-bar-item>
+    <t-tab-bar-item value="rankings" > 榜单 </t-tab-bar-item>
+    <t-tab-bar-item value="my" > 我的 </t-tab-bar-item>
+  </t-tab-bar>
+  </view>
+  
+
 </scroll-view>

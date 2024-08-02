@@ -71,7 +71,7 @@
               variant="outline"
               bind:tap="gotoindex"
               size="small"
-            >主页主页</t-button>
+            >返回主页</t-button>
           </view>
         </t-col>
 

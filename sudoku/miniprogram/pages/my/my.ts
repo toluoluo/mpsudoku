@@ -1,12 +1,18 @@
 import { getPageUrl } from "../../utils/libs";
 
-// pages/skill/skill.ts
+// pages/users/users.ts
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    avatar: '',
+    name: '',
+    playTotal: 0,
+    succTotal: 0,
+    failTotal: 0,
+    rate: 0,
 
   },
 
@@ -66,13 +72,6 @@ Page({
 
   },
 
-  gotoindex(){
-    wx.redirectTo({
-      url: '../index/index',
-    });
-  },
-
-  
   gotoPage(e: any){
     let t: string = e.detail.value;
     let url = getPageUrl(t);    

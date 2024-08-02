@@ -1,0 +1,76 @@
+<!--index.wxml-->
+<view class="block">
+  <t-navbar
+    t-class-placeholder="t-navbar-placeholder"
+    t-class-content="t-navbar-content"
+    class="block"
+    title="榜单排名"
+  />
+</view>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">   
+    <t-row>
+
+      <t-col span="24">
+        <view class="view title">
+        数独榜单
+        </view>
+        <t-divider content="7天内解答数独耗时最少前30名" align="left" />
+      </t-col>
+
+      <t-col span="24">
+        <view class="view">
+          <t-tabs defaultValue="{{currLevel}}"  bind:click="switchTab" t-class="custom-tabs">
+            <t-tab-panel label="入门" value="1" />
+            <t-tab-panel label="简单" value="2" />
+            <t-tab-panel label="中级" value="3" />
+            <t-tab-panel label="困难" value="4" />
+            <t-tab-panel label="专家" value="5" />
+          </t-tabs>
+        </view>
+      </t-col>
+
+       <t-col span="24">
+        <block wx:if="{{list.length > 0}}">
+          <block wx:for="{{list}}">
+
+          <t-row>
+            <t-col span="4">
+              <view class="r-view rankings"><image src="../../img/{{index == 0 ? '0' : (index == 1 ? '1' : (index == 2 ? '2' : '3'))}}.png"  class="img"/></view>
+            </t-col>
+            <t-col span="20" >
+              <view class="r-view rankings"><span class="{{index == 0 ? 'first' : (index == 1 ? 'second' : (index == 2 ? 'third' : 'other'))}}">第 {{index+1}}  名</span></view>
+            </t-col>
+            <t-col span="4"><view class="r-view"><t-avatar class="avatar-example" shape="round" image="{{item['avatar']}}" /></view></t-col>
+            <t-col span="20">
+              <t-row>
+                <t-col span="24"><view class="r-view r-title text-1">{{item['name']}}</view></t-col>
+                <t-col span="16"><view class="r-view r-text"><t-tag class="margin-16" variant="light" theme="success" size="small">用时：{{item['format_time']}}</t-tag></view></t-col>
+                <t-col span="8"><view><t-button theme="light" size="small" variant="text" bind:tap="gotoChallenge" data-playid="{{item.id}}">去挑战</t-button></view></t-col>
+              </t-row>
+            </t-col>
+            <t-col span="24"><view class="r-view"><t-divider  /></view></t-col>
+          </t-row>
+          </block>
+          <view style="margin-bottom: 120rpx;"></view>
+        </block>
+        <block wx:else> 
+          <view class="r-view text">
+            暂无数据
+          </view>
+        </block>
+      </t-col>
+    </t-row>
+     
+  </view>  
+
+  <view>
+    <t-tab-bar t-class="t-tab-bar" value="active" bindchange="gotoPage" split="{{false}}">
+      <t-tab-bar-item value="home" > 首页 </t-tab-bar-item>
+      <t-tab-bar-item value="active" > 榜单 </t-tab-bar-item>
+      <t-tab-bar-item value="my" > 我的 </t-tab-bar-item>
+    </t-tab-bar>
+  </view>
+
+</scroll-view>

@@ -1,4 +1,4 @@
-// pages/users/users.ts
+// pages/history/history.ts
 Page({
 
   /**
