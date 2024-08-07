@@ -26,7 +26,7 @@ App<IAppOption>({
               sysLocalSet('login_user_token_expire_at', sysTimeStamp() + 30 * 24 * 3600);
               const user: GlobalUser = {
                 user_id: data.data?.user_id ?? 0,
-                nick_name: data.data.nick_name,
+                name: data.data.name,
                 avatar: data.data.avatar ? data.data.avatar : globalAvatar,
                 level: data.data.level,
               }

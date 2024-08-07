@@ -1,2 +1,52 @@
 <!--pages/detail/detail.wxml-->
-<text>pages/detail/detail.wxml</text>
+<!--pages/games/games.wxml-->
+<view>
+  <t-navbar
+    t-class-placeholder="t-navbar-placeholder"
+    t-class-content="t-navbar-content"
+    title="数独战绩详情"
+    left-arrow
+    >
+    <text class="left-text" slot="left" bind:tap="gotoMyhistory">返回</text>    
+  </t-navbar>
+</view>
+
+<view class="games-container">
+ 
+  <view class="view">
+    <view class="content">
+      <view wx:for="{{eighty}}" class="content-child {{index > 8 ? 'border-top' : 'border-left'}} {{ques[index] > 0 ? 'light' : ''}}  {{ connectCell[index] ? 'dark' : ''}} {{ checkCells[index] ? 'checkCell' : ''}} {{ sameNumCell[index] ? 'same' : ''}} {{ selectCell[index] ? 'active' : ''}} " data-index="{{index}}" bind:tap="{{ques[index] > 0 ? 'showFillTip' : 'getUnfill' }}">
+        <!-- {{ques[index] > 0 ? ques[index] : ' '}}      -->
+        <view wx:if="{{ques[index] > 0}}" class="filled"> {{ques[index]}}</view>
+        <view wx:else>
+            <view id="item-{{index}}" class="isCollect"><text decode="true">{{answer[index] > 0 ? answer[index] : '&nbsp;'}}</text></view>
+        </view>
+      </view>
+    </view>    
+  </view>
+
+  <view class="view">
+    <t-row>
+    <t-col span="12"><view class="text"><text>等级：{{level_str}}</text></view></t-col>
+    <t-col span="12"><view class="text"><text>总用时：{{formattedTime}}</text></view></t-col>
+    <t-col span="12"><view class="text"><text>总错误：{{errCt}}/{{maxErrCt}}</text></view></t-col>
+    <t-col span="12"><view class="text"><text>总提示：{{tipCt}}</text></view></t-col>
+    </t-row>
+  </view>
+
+  <view class="view">
+  <t-row>
+    <t-col span="2"></t-col>
+    <t-col span="10"><view class="text"><t-button theme="light" size="small"  bind:tap="switchAnswer" >{{isShowAnswer ? '查看问题' : '显示答案'}}</t-button></view></t-col>
+    <t-col span="10"><view class="text"><t-button theme="light" size="small"  bind:tap="gotoMyhistory" >返回战绩</t-button></view></t-col>
+    <t-col span="2"></t-col>
+    <t-col span="24">
+      <view>
+        <ad unit-id="adunit-40da86a17195f8fb" ad-type="video" ad-theme="white" bindload="adLoad" binderror="adError" bindclose="adClose"></ad>
+      </view>
+      </t-col>
+  </t-row>
+  </view>
+
+</view>
+

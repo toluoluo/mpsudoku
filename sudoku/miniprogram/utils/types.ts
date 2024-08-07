@@ -1,6 +1,6 @@
 export interface GlobalUser{
   user_id: number,
-  nick_name: string,
+  name: string,
   avatar: string,
   level: number,
 }
@@ -24,4 +24,26 @@ export interface RankingsList{
   nick_name: string,
   use_time: number,
   format_time: string,
+}
+
+export interface MyHonour{
+  level_num: number,
+  level: string,
+  play_total: number,
+  succ_total: number,
+  fast_time: string,
+  total_time: string,
+  last_play_at: string,
+  rate: number | string,
+}
+
+export interface MyHistory {
+  id?: number,
+  answer?: string,
+  question?: string,
+  level?: string, 
+  use_time?: string,
+  err_ct?: number, 
+  tip_ct?: number,
+  create_at?: string,
 }

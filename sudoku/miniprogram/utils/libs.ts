@@ -9,6 +9,10 @@ export const sysLocalGet = function (key: string) {
   return wx.getStorageSync(key) || false;
 }
 
+export const sysLocalClear = function(){
+  wx.clearStorageSync();
+}
+
 // 生成请求参数
 const buildReqParam = function(arr:  Record<string, any>){
 
@@ -43,6 +47,9 @@ export const sysWxReqPost = function(uri: string, data: Record<string, any>){
       },
       method: "POST",    
       success: function(res){
+        console.log('req uri: ', uri)
+        console.log('req param: ', JSON.stringify(param));
+        console.log('req res: ', res);
         if(res.statusCode === 200){
           resolve(res.data);
         }else{
@@ -55,6 +62,34 @@ export const sysWxReqPost = function(uri: string, data: Record<string, any>){
     });
   })
 }
+// 系统统一上传文件接口
+export const sysWxUploadFile = function(file_path: string){
+  const param = buildReqParam({});
+  return new Promise((resolve, reject) => {
+    wx.uploadFile({
+      url: reqUrl+'/v1/comm/upload',
+      filePath: file_path,
+      name: 'file',
+      formData: param,
+      success: function(res){
+
+        console.log('req upload: ')
+        console.log('req param: ', JSON.stringify(param));
+        console.log('req res: ', res);
+
+        if(res.statusCode === 200){
+          resolve(res.data);
+        }else{
+          reject(res);
+        }
+      },
+      fail: function(err){
+        reject(err);
+      }
+    });
+  })
+}
+
 
 export function formatTime(useSeconds: number) {
   const h = padTime(Math.floor(useSeconds / 3600));

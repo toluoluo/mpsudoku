@@ -20,9 +20,36 @@ page {
     width: 240px;
     height: 240px;
   }
+
+  .align-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
  
 
   .img{
     height: 36px;
     width: 36px;
   }
+
+
+.avatar-wrapper {
+  padding: 0;
+  width: 56px !important;
+  border-radius: 8px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+
+.popup-center{
+  width: 260px;
+  height: 260px;
+}

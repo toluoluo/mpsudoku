@@ -19,6 +19,8 @@ Page({
    */
   onLoad(options: any) {
     let level: number = options?.level ?? 1;
+
+    console.log('return level: ', level);
     this.setData({
       currLevel: level,
     });

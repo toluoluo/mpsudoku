@@ -1,2 +1,80 @@
 <!--pages/history/history.wxml-->
-<text>pages/history/history.wxml</text>
+<!-- <view class="block">
+  <t-navbar
+    t-class-placeholder="t-navbar-placeholder"
+    t-class-content="t-navbar-content"
+    class="block"
+    title="我的战绩"
+  />
+</view> -->
+
+<view>
+  <t-navbar
+    t-class-placeholder="t-navbar-placeholder"
+    t-class-content="t-navbar-content"
+    title="我的战绩"
+    left-arrow
+    >
+    <text class="left-text" slot="left" bind:tap="gotoMy">返回</text>    
+  </t-navbar>
+</view>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">   
+    <t-row>
+
+    <t-col span="24">
+        <view class="view title">
+        我的战绩
+        </view>
+        <t-divider content="只显示最新150条记录" align="left" />
+      </t-col>
+
+      <t-col span="24">
+        <view class="view">
+          <t-tabs value="{{currL}}"  bind:click="switchTab" t-class="custom-tabs">
+            <t-tab-panel label="入门" value="1" />
+            <t-tab-panel label="简单" value="2" />
+            <t-tab-panel label="中级" value="3" />
+            <t-tab-panel label="困难" value="4" />
+            <t-tab-panel label="专家" value="5" />
+          </t-tabs>
+        </view>
+      </t-col>
+
+       <t-col span="24">
+        <block wx:if="{{list.length > 0}}">
+          <block wx:for="{{list}}">
+          <t-row>
+            <t-col span="12"><view class="view"><text class="text">用时：{{item.use_time}}</text></view></t-col>
+            <t-col span="6"><view class="view"><t-button theme="light" size="small"  bind:tap="gotoDetail" data-playid="{{item.id}}">详情</t-button></view></t-col>
+            <t-col span="12"><view class="view"><text class="text">错误次数：{{item.err_ct}}</text></view></t-col>
+            <t-col span="12"><view class="view"><text class="text">提示次数：{{item.tip_ct}}</text></view></t-col>
+            <t-col span="24"><view class="view"><text class="text">创建时间：{{item.create_at}}</text></view></t-col>
+            
+            <t-col span="24"><view class="view"><t-divider  /></view></t-col>
+          </t-row>
+          </block>
+          <view style="margin-bottom: 120rpx;"></view>
+        </block>
+        <block wx:else> 
+          <view class="r-view text">
+            暂无数据
+          </view>
+        </block>
+      </t-col>
+    </t-row>
+     
+  </view>  
+
+  <t-toast id="t-toast" />
+
+  <view>
+    <t-tab-bar t-class="t-tab-bar" value="" bindchange="gotoPage" split="{{false}}">
+      <t-tab-bar-item value="home" > 首页 </t-tab-bar-item>
+      <t-tab-bar-item value="rankings" > 榜单 </t-tab-bar-item>
+      <t-tab-bar-item value="my" > 我的 </t-tab-bar-item>
+    </t-tab-bar>
+  </view>
+
+</scroll-view>

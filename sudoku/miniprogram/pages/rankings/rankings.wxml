@@ -1,4 +1,3 @@
-<!--index.wxml-->
 <view class="block">
   <t-navbar
     t-class-placeholder="t-navbar-placeholder"
@@ -21,7 +20,7 @@
 
       <t-col span="24">
         <view class="view">
-          <t-tabs defaultValue="{{currLevel}}"  bind:click="switchTab" t-class="custom-tabs">
+          <t-tabs value="{{currLevel}}"  bind:click="switchTab" t-class="custom-tabs">
             <t-tab-panel label="入门" value="1" />
             <t-tab-panel label="简单" value="2" />
             <t-tab-panel label="中级" value="3" />
@@ -37,10 +36,10 @@
 
           <t-row>
             <t-col span="4">
-              <view class="r-view rankings"><image src="../../img/{{index == 0 ? '0' : (index == 1 ? '1' : (index == 2 ? '2' : '3'))}}.png"  class="img"/></view>
+              <view class="r-view rankings"></view>
             </t-col>
             <t-col span="20" >
-              <view class="r-view rankings"><span class="{{index == 0 ? 'first' : (index == 1 ? 'second' : (index == 2 ? 'third' : 'other'))}}">第 {{index+1}}  名</span></view>
+              <view class="r-view rankings title"><span class="{{index == 0 ? 'first' : (index == 1 ? 'second' : (index == 2 ? 'third' : 'other'))}}">第 {{index+1}}  名</span></view>
             </t-col>
             <t-col span="4"><view class="r-view"><t-avatar class="avatar-example" shape="round" image="{{item['avatar']}}" /></view></t-col>
             <t-col span="20">
