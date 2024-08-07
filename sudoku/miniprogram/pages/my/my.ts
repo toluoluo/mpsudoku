@@ -65,7 +65,7 @@ Page({
             fast_time: formatTime(Number(rst[i].fast_time)),
             total_time: formatTime(Number(rst[i].total_time)),
             last_play_at: rst[i].last_play_at,
-            rate: pt > 0 ? Math.round((st / pt) *100) / 100 : '0',
+            rate: pt > 0 ? ((Math.round((st / pt) *100) / 100)*100).toString()+'%' : '0%',
           }
         }
         this.setData({
@@ -129,7 +129,11 @@ Page({
 
   onChooseAvatar(e: any) {
     const { avatarUrl } = e.detail
-    let au: string = '';
+    console.log('avatar url: ', avatarUrl);
+    if(avatarUrl == ''){
+      return;
+    }
+
     if(avatarUrl.startsWith('wxfile://tmp') || avatarUrl.startsWith('http://tmp')){
       // 自定义头像
       sysWxUploadFile(avatarUrl)
@@ -154,8 +158,7 @@ Page({
         console.log('request api fail: ', err);
       });
     }else{
-      au = avatarUrl;
-      this.updateAvatar(0, au);
+      this.updateAvatar(0, avatarUrl);
     }
   },
 

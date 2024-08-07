@@ -64,6 +64,8 @@
      
   </view>  
 
+  <t-toast id="t-toast" />
+
   <view>
     <t-tab-bar t-class="t-tab-bar" value="active" bindchange="gotoPage" split="{{false}}">
       <t-tab-bar-item value="home" > 首页 </t-tab-bar-item>

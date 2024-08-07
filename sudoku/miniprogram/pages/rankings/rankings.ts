@@ -1,6 +1,7 @@
 import { globalAvatar } from "../../utils/global";
 import { formatTime, getPageUrl, sysWxReqPost } from "../../utils/libs";
 import { RankingsList } from "../../utils/types";
+import { Toast } from 'tdesign-miniprogram';
 
 
 // pages/rankings/rankings.ts
@@ -90,10 +91,28 @@ Page({
   // 去挑战
   gotoChallenge(e: any){
     let play_id: number = e.currentTarget.dataset.playid;
-    console.log("play id : ", play_id);
-    wx.redirectTo({
-      url: '../games/games?level='+this.data.currLevel+'&from=1&pid='+play_id,
-    });
+
+    // 判断是否玩过
+    sysWxReqPost('/v1/sudoku/question/rankingscheck', {'play_id': play_id})
+    .then((data: any) => {
+      if(data?.code == 0){
+        if(data.data.play.Id > 0){
+          Toast({
+            context: this,
+            selector: '#t-toast',
+            message: '您已挑战过该游戏',
+          });
+          return;
+        }
+      }
+      console.log("play id : ", play_id);
+      wx.redirectTo({
+        url: '../games/games?level='+this.data.currLevel+'&from=1&pid='+play_id,
+      });
+
+    }).catch((e:any) =>{})
+
+    
   },
 
   gotoPage(e: any){

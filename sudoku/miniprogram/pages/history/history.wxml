@@ -27,7 +27,7 @@
         <view class="view title">
         我的战绩
         </view>
-        <t-divider content="只显示最新150条记录" align="left" />
+        <t-divider content="只显示最新150条成功记录" align="left" />
       </t-col>
 
       <t-col span="24">

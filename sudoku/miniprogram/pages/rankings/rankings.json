@@ -8,7 +8,8 @@
     "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel",
     "t-avatar": "tdesign-miniprogram/avatar/avatar",
     "t-button": "tdesign-miniprogram/button/button",
-     "t-image": "tdesign-miniprogram/image/image",
-     "t-tag": "tdesign-miniprogram/tag/tag"
+    "t-image": "tdesign-miniprogram/image/image",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-toast": "tdesign-miniprogram/toast/toast"
   }
 }
