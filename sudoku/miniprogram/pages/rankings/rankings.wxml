@@ -39,7 +39,7 @@
               <view class="r-view rankings"></view>
             </t-col>
             <t-col span="20" >
-              <view class="r-view rankings title"><span class="{{index == 0 ? 'first' : (index == 1 ? 'second' : (index == 2 ? 'third' : 'other'))}}">第 {{index+1}}  名</span></view>
+              <view class="r-view rankings title"><span class="font {{index == 0 ? 'first' : (index == 1 ? 'second' : (index == 2 ? 'third' : 'other'))}}">第 {{index+1}}  名</span></view>
             </t-col>
             <t-col span="4"><view class="r-view"><t-avatar class="avatar-example" shape="round" image="{{item['avatar']}}" /></view></t-col>
             <t-col span="20">
@@ -55,7 +55,7 @@
           <view style="margin-bottom: 120rpx;"></view>
         </block>
         <block wx:else> 
-          <view class="r-view text">
+          <view class="r-view text align-center" style="margin-top: 50rpx;">
             暂无数据
           </view>
         </block>

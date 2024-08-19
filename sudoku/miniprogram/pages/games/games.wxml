@@ -56,6 +56,10 @@
     </view>
   </view>
 
+  <view class="view">
+  <view class="text align-center" style="color: #999; margin-top:50rpx;">小程序搜索“有趣数独”，开启数独旅程</view>
+  </view>
+
     <t-popup visible="{{isShowMaxErr}}" bind:visible-change="onVisibleChange" placement="center">
     <view style="height: 350rpx;">
       <t-row>

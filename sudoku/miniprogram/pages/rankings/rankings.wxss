@@ -40,6 +40,7 @@
 
   .r-view{
     padding: 10rpx 32rpx;
+    
   }
   .r-title{
     font-size: 30rpx;
@@ -57,7 +58,7 @@
 
   .first{
     line-height: 60rpx;
-    color:red;
+    color:rgb(233, 8, 8);
   }
   .second{
     line-height: 60rpx;
@@ -69,9 +70,22 @@
   }
   .other{
     line-height: 60rpx;
+    font-size: larger;
+    
+  }
+
+  .font{
+    font-weight: 200;
+    font-weight:700;
   }
 
   .img{
     height: 36px;
     width: 36px;
+  }
+
+  .align-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
