@@ -26,7 +26,7 @@
         </view>
       </t-col> -->
 
-      <t-col span="24">
+      <!-- <t-col span="24">
         <view class="view">
           <t-button
             block
@@ -34,7 +34,7 @@
             bind:tap="gotoskill"
           >解题技巧</t-button>
         </view>
-      </t-col>
+      </t-col> -->
       <t-col span="24">
         <view class="view">
           <t-button
@@ -66,6 +66,12 @@
             >继续游戏</t-button>
           </view>
         </block>
+      </t-col>
+
+      <t-col span="24">
+      <view style="margin-top:40rpx; padding:20rpx;">
+        <ad unit-id="adunit-40da86a17195f8fb" ad-type="video" ad-theme="white" bindload="adLoad" binderror="adError" bindclose="adClose"></ad>
+      </view>
       </t-col>
       
     </t-row>

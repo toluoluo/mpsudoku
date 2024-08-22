@@ -65,7 +65,7 @@ Page({
             fast_time: formatTime(Number(rst[i].fast_time)),
             total_time: formatTime(Number(rst[i].total_time)),
             last_play_at: rst[i].last_play_at,
-            rate: pt > 0 ? ((Math.round((st / pt) *100) / 100)*100).toString()+'%' : '0%',
+            rate: pt > 0 ? (parseFloat((Math.round((st / pt) *100)).toFixed(2))).toString()+'%' : '0%',
           }
         }
         this.setData({

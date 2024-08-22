@@ -359,8 +359,12 @@ Page({
       steps = [];
       sysLocalSet('curr_ques_status', '');
       sleepAt();
+
+      // 'err_ct' : this.data.totalErrCt,
+      // 'tip_ct' : this.data.totalTipCt,
+
       wx.redirectTo({
-        url: '../succ/succ?level='+this.data.level+'&id='+this.data.playId+'&seconds='+this.data.useSeconds,
+        url: '../succ/succ?level='+this.data.level+'&id='+this.data.playId+'&seconds='+this.data.useSeconds+'&err_ct='+this.data.totalErrCt+'&tip_ct='+this.data.totalTipCt,
       });
     }
   },

@@ -23,6 +23,9 @@ Page({
     let play_id = Number(options.id);
     let seconds = Number(options.seconds);
 
+    let err_ct = Number(options.err_ct);
+    let tip_ct = Number(options.tip_ct);
+
     this.setData({
       level: level,
       level_str: getlevel(level),
@@ -34,6 +37,8 @@ Page({
       'use_time': seconds,
       'use_ad':0,
       'is_pass':1,
+      'err_ct': err_ct,
+      'tip_ct': tip_ct,
     })
     .then((data:any) =>{})
     .catch((err: any) =>{});
